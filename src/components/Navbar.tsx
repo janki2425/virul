@@ -53,8 +53,8 @@ import React from "react"
 
 const Navbar = () => {
   return (
-    <div className="w-full max-w-[1280px] mx-auto">
-      <header className="fixed top-0 max-w-[1280px] w-full h-[64px] z-[60] bg-transparent text-white px-4 xl:px-0 flex items-center justify-between">
+    <div className="w-full max-w-[1320px] mx-auto">
+      <header className="absolute top-0 max-w-[1320px] w-full h-[64px] z-[60] bg-transparent text-white sm:px-4 flex items-center justify-between">
       <div className="lg:hidden">
         <Sheet>
           <SheetTrigger asChild>
