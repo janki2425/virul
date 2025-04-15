@@ -5,12 +5,11 @@ import Link from "next/link"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import React from "react"
-import login from "@/pages/auth/login"
 
 const Navbar = () => {
   return (
     <div className="w-full max-w-[1320px] mx-auto">
-      <header className="absolute top-0 max-w-[1320px] w-full h-[64px] z-[60] bg-transparent text-white sm:px-4 flex items-center justify-between">
+      <header className="absolute top-0 max-w-[1320px] w-full h-[64px] z-[60] bg-transparent text-white px-4 flex items-center justify-between">
       <div className="lg:hidden">
         <Sheet>
           <SheetTrigger asChild>
@@ -60,7 +59,7 @@ const Navbar = () => {
           <Link href={'/auth/login'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
             Log In
           </Link>
-          <Link href="/" className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
+          <Link href={'auth/signup'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
             Sign up
           </Link>
         </div>

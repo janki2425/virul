@@ -189,3 +189,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@media (min-width: 1024px) {
+  .h_custom {
+    height: 173px;
+  }
+}
+@media (min-width: 1280px) {
+  .h_custom {
+    height: 146px;
+  }
+}
+@media (min-width: 1440px) {
+  .h_custom {
+    height: 200px;
+  }
+}
+@media (min-width: 2560px) {
+  .h_custom {
+    height: 371px;
+  }
+}
