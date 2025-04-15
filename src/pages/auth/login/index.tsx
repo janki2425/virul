@@ -24,7 +24,7 @@ function login() {
           if (response.token) {
               localStorage.setItem("token", response.token);
               toast.success("Login successful!");
-              router.push("/auth/dashboard");
+              router.push("/components/events");
           } else {
               toast.error("Login failed. Please try again.");
               setError(response.error || "Invalid credentials");
