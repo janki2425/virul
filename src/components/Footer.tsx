@@ -46,9 +46,9 @@ const Footer = () => {
             {sections.map((sec, idx) => (
               <div key={idx} className="flex flex-col gap-2.5">
                 <h3 className="text-black text-[20px] font-bold">{sec.title}</h3>
-                <div className="flex flex-col gap-2 max-w-[150px] text-[#EC248F] text-[14px]">
+                <div className="flex flex-col gap-2 max-w-[150px] text-[#EC248F] text-[14px] cursor-pointer">
                   {sec.links.map((link, i) => (
-                    <p key={i}>{link}</p>
+                      <p key={i} className="hover:underline font-thin">{link}</p>
                   ))}
                 </div>
               </div>
@@ -59,17 +59,17 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className="flex flex-col lg:flex-row text-center gap-5 lg:justify-between mt-8">
           <p className="text-[#868e96] text-[14px]">
-            &copy; 2025 Virul. All rights reserved.
+            &copy; {new Date().getFullYear()} Virul. All rights reserved.
           </p>
           <div className="flex gap-5 items-center justify-center text-[#495057] text-[18px]">
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              <FontAwesomeIcon icon={faTwitter} className="hover:text-[#1DA1F2]" />
+              <FontAwesomeIcon icon={faTwitter}/>
             </a>
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-              <FontAwesomeIcon icon={faFacebookF} className="hover:text-[#1877F2]" />
+              <FontAwesomeIcon icon={faFacebookF}/>
             </a>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-              <FontAwesomeIcon icon={faInstagram} className="hover:text-[#E1306C]" />
+              <FontAwesomeIcon icon={faInstagram}/>
             </a>
           </div>
         </div>

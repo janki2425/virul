@@ -3,85 +3,101 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
-import React, { useState,useEffect } from "react";
-import { loginUser } from '@/pages/api/auth/auth';
+import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { registerUser } from '@/pages/api/auth/auth';
 
-function login() {
+function signup() {
     const [showPassword, setShowPassword] = useState(false);
-    const [form , setForm] = useState({email:"",password:""});
+    const [form , setForm] = useState({first_name:"",last_name:"",email:"",password:""});
     const [error , setError] = useState("");
-    const router = useRouter();
+    const route = useRouter();
 
-    const handleSubmit = async(e: React.FormEvent) =>{
-      e.preventDefault();
-      setError("");
-      
-      console.log("📤 Submitting login form with data:", form);
-      try{
-          const response = await loginUser(form);
 
-          if (response.token) {
-              localStorage.setItem("token", response.token);
-              toast.success("Login successful!");
-              router.push("/auth/dashboard");
-          } else {
-              toast.error("Login failed. Please try again.");
-              setError(response.error || "Invalid credentials");
-              }
-      }
-      catch(error){
-          setError("Invalid User");
-      }
-  }
+    const handleSubmit = async(e : React.FormEvent)=>{
+        e.preventDefault();
+        setError("");
+
+        try{
+            const response = await registerUser(form);
+
+            if (response.error) {
+                setError(response.error);
+            } else {
+            toast.success("Login successful!");
+            route.push("/auth/login");
+            }
+        }
+        catch(error){
+            setError("Signup failed. Try again.");
+            toast.error("signup failed. Please try again.");
+        }
+    }
 
   return (
     <div className='relative'>
     <div className='absolute h_custom top-0 w-full h-[130px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]'></div>
     <div className="min-h-screen flex justify-center">
 
-      <div className="absolute top-[70px] mx-auto flex flex-col gap-1 bg-[#F8F8F8] z-20 shadow-md pt-8 pb-11 px-6 w-full max-w-[280px] sm:max-w-[340px] md:max-w-[466px]">
+      <div className="absolute top-[70px] mx-auto flex flex-col gap-1 bg-[#F8F8F8] z-20 shadow-md pt-8 pb-11 px-6 md:px-14 w-full max-w-[280px] sm:max-w-[340px] md:max-w-[466px]">
         <Link href="/">
             <Image src="/virul-logo.svg" width={70} height={70} alt="virul"  className='mx-auto mt-[11px]'/>
         </Link>
-        <div className='leading-6'>
-            <h2 className="text-[24px] font-[700] text-[#0f0f0f] text-center mt-6 tracking-tight">Log in</h2>
+        <div className='leading-5'>
+            <h2 className="text-[24px] font-[700] text-[#0f0f0f] text-center mt-6 md:mt-5 tracking-[-0.2px] leading-8">Great events start with Virul</h2>
             <p className="text-center text-[14px] text-[#6F7881] mb-2">
-            Don't have an account?{' '}
-            <Link href={"/auth/signup"} className="text-pink-500 font-medium hover:underline">
-                Sign up
+            Already have an account?{' '}
+            <Link href="/auth/login" className="text-pink-500 font-medium hover:underline">
+                Log in
             </Link>
             </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 mt-[3px]">
+        <form onClick={handleSubmit} className="space-y-3 mt-[3px]">
+          <div className='grid grid-cols-2 gap-[10px]'>
+            <div>
+                <label className="block text-[12px] font-[400] text-[#6F7881]">First Name</label>
+                <input
+                type="text"
+                value={form.first_name}
+                onChange={(e)=>setForm({...form , first_name:e.target.value})}
+                className="mt-1 block text-[14px] w-full bg-white rounded-[4px] border border-gray-300 px-2 py-[7px] focus:ring-pink-500 focus:border-pink-500"
+                required
+                />
+            </div>
+            <div>
+                <label className="block text-[12px] font-[400] text-[#6F7881]">Last Name</label>
+                <input
+                type="text"
+                value={form.last_name} 
+                onChange={(e)=>setForm({...form , last_name:e.target.value})}
+                className="mt-1 block text-[14px] w-full bg-white rounded-[4px] border border-gray-300 px-2 py-[7px] focus:ring-pink-500 focus:border-pink-500"
+                required
+                />
+            </div>
+          </div>
           <div>
             <label className="block text-[12px] font-[400] text-[#6F7881]">Email</label>
             <input
               type="email"
               value={form.email} 
               onChange={(e)=>setForm({...form , email:e.target.value})}
-              className="mt-1 block text-[14px] w-full bg-white rounded-[4px] border border-gray-300 p-2 focus:ring-pink-500 focus:border-pink-500"
+              className="mt-1 block text-[14px] w-full bg-white rounded-[4px] border border-gray-300 px-2 py-[7px] focus:ring-pink-500 focus:border-pink-500"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="flex justify-between text-[12px] font-[400] text-[#6F7881]">
+            <label className="flex justify-between text-[12px] font-[400] text-[#6F7881]">
               Password
-              <Link href={'/auth/forgot'} className="text-pink-500 text-[12px]">
-                Forgot password?
-              </Link>
             </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
                 minLength={6}
-                value={form.password}
+                value={form.password} 
                 onChange={(e)=>setForm({...form , password:e.target.value})}
-                className="mt-1 block w-full indent-1 text-[13px] bg-white text-[#6F7881] rounded-[4px] border border-gray-300 p-2 pr-10 focus:ring-pink-500 focus:border-pink-500"
+                className="mt-1 block w-full indent-1 text-[13px] bg-white text-[#6F7881] rounded-[4px] border border-gray-300 px-2 py-[7px] pr-10 focus:ring-pink-500 focus:border-pink-500"
                 placeholder="Minimum 6 characters"
                 required
               />
@@ -97,10 +113,15 @@ function login() {
 
           <button
             type="submit"
-            className="w-full bg-[#EC248F] mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-semibold transition"
+            className="w-full bg-[#EC248F] mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-semibold hover:bg-pink-700 transition"
           >
-            Log in
+            Sign up
           </button>
+
+          <div className='text-[14px] font-[400] flex flex-col md:flex-row items-center justify-center mt-[6px]'>
+            <p className='text-[#6F7881]'>By continuing you agree to</p>
+            <p className='hover:underline text-[#EC248F]'>Virul's Terms of Service</p>
+          </div>
         </form>
 
         <hr className='mt-5'/>
@@ -146,4 +167,4 @@ function login() {
   );
 }
 
-export default login;
+export default signup;

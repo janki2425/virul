@@ -5,7 +5,6 @@ import Link from "next/link"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import React from "react"
-import login from "@/pages/auth/login"
 
 const Navbar = () => {
   return (
@@ -60,7 +59,7 @@ const Navbar = () => {
           <Link href={'/auth/login'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
             Log In
           </Link>
-          <Link href="/" className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
+          <Link href={'auth/signup'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
             Sign up
           </Link>
         </div>
