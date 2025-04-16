@@ -5,35 +5,39 @@ import Image from 'next/image';
 import { useRouter } from "next/router";
 import React, { useState,useEffect } from "react";
 import { loginUser } from '@/pages/api/auth/auth';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from "react-toastify";
 
-function login() {
+function Login() {
     const [showPassword, setShowPassword] = useState(false);
-    const [form , setForm] = useState({email:"",password:""});
-    const [error , setError] = useState("");
+    const [form, setForm] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
     const router = useRouter();
 
-    const handleSubmit = async(e: React.FormEvent) =>{
-      e.preventDefault();
-      setError("");
-      
-      console.log("📤 Submitting login form with data:", form);
-      try{
-          const response = await loginUser(form);
+    const { mutate, isPending } = useMutation({
+      mutationFn: loginUser,
+      onSuccess: (data) => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          toast.success('Login successful!');
+          router.push('/');
+        } else {
+          toast.error('Login failed. Please try again.');
+          setError(data.error || 'Invalid credentials');
+        }
+      },
+      onError: (error: any) => {
+        setError(error.message || 'Login error');
+        toast.error(error.message || 'Something went wrong');
+      },
+    });
 
-          if (response.token) {
-              localStorage.setItem("token", response.token);
-              toast.success("Login successful!");
-              router.push("/components/events");
-          } else {
-              toast.error("Login failed. Please try again.");
-              setError(response.error || "Invalid credentials");
-              }
-      }
-      catch(error){
-          setError("Invalid User");
-      }
-  }
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      setError('');
+      mutate(form);
+    };
+  
 
   return (
     <div className='relative'>
@@ -146,4 +150,4 @@ function login() {
   );
 }
 
-export default login;
+export default Login;

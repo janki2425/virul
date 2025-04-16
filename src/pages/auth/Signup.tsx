@@ -2,37 +2,55 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { registerUser } from '@/pages/api/auth/auth';
+import { useMutation } from '@tanstack/react-query';
 
-function signup() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [form , setForm] = useState({first_name:"",last_name:"",email:"",password:""});
-    const [error , setError] = useState("");
-    const route = useRouter();
+async function registerUser(formData: {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}) {
+  const res = await fetch('/api/auth/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData),
+  });
 
+  const data = await res.json();
 
-    const handleSubmit = async(e : React.FormEvent)=>{
-        e.preventDefault();
-        setError("");
+  if (!res.ok) {
+    throw new Error(data.error || 'Signup failed');
+  }
 
-        try{
-            const response = await registerUser(form);
+  return data;
+}
 
-            if (response.error) {
-                setError(response.error);
-            } else {
-            toast.success("Login successful!");
-            route.push("/auth/login");
-            }
-        }
-        catch(error){
-            setError("Signup failed. Try again.");
-            toast.error("signup failed. Please try again.");
-        }
-    }
+function Signup() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [form, setForm] = useState({first_name: '',last_name: '',email: '',password: '',});
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      toast.success('Signup successful!');
+      router.push('/auth/login');
+    },
+    onError: (error: any) => {
+      setError(error.message);
+      toast.error(error.message);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    mutation.mutate(form);
+  };
 
   return (
     <div className='relative'>
@@ -53,7 +71,7 @@ function signup() {
             </p>
         </div>
 
-        <form onClick={handleSubmit} className="space-y-3 mt-[3px]">
+        <form onSubmit={handleSubmit} className="space-y-3 mt-[3px]">
           <div className='grid grid-cols-2 gap-[10px]'>
             <div>
                 <label className="block text-[12px] font-[400] text-[#6F7881]">First Name</label>
@@ -167,4 +185,4 @@ function signup() {
   );
 }
 
-export default signup;
+export default Signup;

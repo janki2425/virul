@@ -4,9 +4,64 @@ import Image from "next/image"
 import Link from "next/link"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import React from "react"
+import React, { useState, useEffect } from "react"
+import { useRouter } from "next/router"
+import { BACKEND_URL } from "@/pages/api/auth/auth"
+import axios from 'axios';
+
+interface UserType {
+  first_name: string;
+  last_name: string;
+}
 
 const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter();
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await axios.get(`${BACKEND_URL}/api/user`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+          });
+          if (response.data.user) {
+            setUser(response.data.user);
+            setIsLoggedIn(true);
+            console.log("Set user from backend API:", response.data.user);
+          } else {
+            setError("Invalid API response format.");
+          }
+        } catch (err) {
+          setError("Failed to fetch user details from backend.");
+          console.error("Backend fetch error:", err);
+        }
+      } else {
+        setError("No authentication found.");
+        console.log("No session or token found.");
+      }
+    };
+
+    fetchUserData(); // Call the function to fetch user data
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUser(null);
+    setShowDropdown(false);
+    router.push("/");
+  };
+
+
   return (
     <div className="w-full max-w-[1320px] mx-auto">
       <header className="absolute top-0 max-w-[1320px] w-full h-[64px] z-[60] bg-transparent text-white px-4 flex items-center justify-between">
@@ -42,28 +97,56 @@ const Navbar = () => {
         <Image src="/virul-logo-white.svg" width={45} height={45} alt="virul" className="lg:w-[100px] lg:h-[100px]"/>
       </Link>
     
-      <Link href={'auth/login'} className="text-white font-[400] text-[16px] lg:hidden">
-            Log in
-      </Link>
+      <div className="lg:hidden">
+          {isLoggedIn ? (
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="text-white font-[400] text-[16px]"
+            >
+              {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()}
+            </button>
+          ) : (
+            <Link href={'auth/Login'} className="text-white font-[400] text-[16px]">
+              Log in
+            </Link>
+          )}
+          {showDropdown && isLoggedIn && (
+            <div className="absolute bg-white text-black p-2 rounded-md mt-2 right-0">
+              <button onClick={handleLogout} className="block text-sm px-4 py-2">Log out</button>
+            </div>
+          )}
+        </div>
 
-      <div className="items-center gap-6 hidden lg:flex">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="text-white font-[400] text-[16px]">
-            Find Events
-          </Link>
-          <Link href="/" className="text-white font-[400] text-[16px]">
-            Help
-          </Link>
+        <div className="items-center gap-6 hidden lg:flex">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="text-white font-[400] text-[16px]">Find Events</Link>
+            <Link href="/" className="text-white font-[400] text-[16px]">Help</Link>
+          </div>
+          <div className="flex items-center gap-3">
+            {isLoggedIn ? (
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="text-white font-[400] text-[16px]"
+              >
+                {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()}
+              </button>
+            ) : (
+              <>
+                <Link href={'/auth/Login'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
+                  Log In
+                </Link>
+                <Link href={'auth/Signup'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
+                  Sign up
+                </Link>
+              </>
+            )}
+            {showDropdown && isLoggedIn && (
+              <div className="absolute bg-white text-black p-2 rounded-md mt-2 right-0">
+                <button onClick={handleLogout} className="block text-sm px-4 py-2">Log out</button>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href={'/auth/login'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
-            Log In
-          </Link>
-          <Link href={'auth/signup'} className="text-white font-[400] text-[14px] px-5 py-2 bg-[#855fa7] rounded-[4px]">
-            Sign up
-          </Link>
-        </div>
-      </div>
 
     </header>
     </div>
