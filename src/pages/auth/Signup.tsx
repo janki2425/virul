@@ -38,7 +38,7 @@ function Signup() {
     mutationFn: registerUser,
     onSuccess: () => {
       toast.success('Signup successful!');
-      router.push('/auth/login');
+      router.push('/auth/Login');
     },
     onError: (error: any) => {
       setError(error.message);
@@ -65,7 +65,7 @@ function Signup() {
             <h2 className="text-[24px] font-[700] text-[#0f0f0f] text-center mt-6 md:mt-5 tracking-[-0.2px] leading-8">Great events start with Virul</h2>
             <p className="text-center text-[14px] text-[#6F7881] mb-2">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-pink-500 font-medium hover:underline">
+            <Link href="/auth/Login" className="text-pink-500 font-medium hover:underline">
                 Log in
             </Link>
             </p>
