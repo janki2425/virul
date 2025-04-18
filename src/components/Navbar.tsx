@@ -87,12 +87,12 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="text-white font-[400] text-[16px]"
+                  className="text-white font-[400] text-[16px] cursor-pointer"
                 >
                   {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()}
                 </button>
                 {showDropdown && (
-                  <div className="absolute bg-white text-black w-[100px] p-2 rounded-md mt-2 right-0">
+                  <div className="absolute bg-white text-black w-[100px] p-2 rounded-md mt-2 right-0 cursor-pointer">
                     <button onClick={handleLogout} className="block text-sm font-[600] px-4 py-2 mx-auto">Log out</button>
                   </div>
                 )}

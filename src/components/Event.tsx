@@ -67,11 +67,11 @@ const Event = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-[20px] font-[600]">Upcoming Events</h2>
         <div className="flex items-center">
-          <p className="text-[16px] font-[100] text-[#EC248F]">View all</p>
+          <p className="text-[16px] font-[100] text-[#EC248F] cursor-pointer">View all</p>
           <Image src={'/view-more.svg'} width={30} height={30} alt="view all" className="" />
         </div>
       </div>
-      <div className="mt-4 px-1 grid_custom gap-4 md:gap-5">
+      <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
         {events.length > 0 ? (
           events.map((event: EventType, index) => (
             <div key={event.id} className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg">

@@ -2,6 +2,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "@/pages/api/auth/auth";
+import Navbar from "@/components/Navbar";
 
 type EventType = {
   id: string;
@@ -113,12 +114,15 @@ const FindEvents = () => {
 
   if (isLoading)
     return <div className="text-center py-10">Loading events...</div>;
-  // if (error)
-  //   return <div className="text-center py-10 text-red-500">{error}</div>;
+  
 
   return (
-
-    <div className="px-4 mt-13 max-w-[1280px] mx-auto">
+    <>
+    <div className="w-full flex h-[64px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]">
+        <Navbar/>
+      </div>
+    <div className="px-4 mt-8 pb-5 max-w-[1280px] mx-auto">
+      
       {/* Filter Form */}
       <form onSubmit={handleFilterSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <input name="name" value={filters.name} onChange={handleInputChange} placeholder="Event Name" className="p-2 border" />
@@ -131,14 +135,14 @@ const FindEvents = () => {
         <input name="maxPrice" value={filters.maxPrice} onChange={handleInputChange} placeholder="Max Price" className="p-2 border" />
           <button
             type="submit"
-            className="col-span-2 text-white p-2 rounded bg-cyan-900"
+            className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
           >
             Apply Filters
           </button>
           <button
           type="button"
           onClick={resetFilter  }
-          className="col-span-2 text-white p-2 rounded bg-gray-700"
+          className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
         >
           Reset Filters
         </button>
@@ -152,7 +156,7 @@ const FindEvents = () => {
       ) : error ? (
         <div className="text-center py-10 text-red-500">{error}</div>
       ) : events.length > 0 ? (
-        <div className="mt-4 px-1 grid_custom gap-4 md:gap-5">
+        <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
           {events.map((event: EventType) => (
             <div
               key={event.id}
@@ -195,6 +199,7 @@ const FindEvents = () => {
         <p className="text-center py-10">No events available.</p>
       )}
     </div>
+    </>
   );
 };
 
