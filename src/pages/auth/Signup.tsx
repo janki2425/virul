@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useMutation } from '@tanstack/react-query';
+import { BACKEND_URL } from '../api/auth/auth';
 
 async function registerUser(formData: {
   first_name: string;
@@ -13,7 +14,7 @@ async function registerUser(formData: {
   email: string;
   password: string;
 }) {
-  const res = await fetch('/api/auth/auth', {
+  const res = await fetch(`${BACKEND_URL}/api/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),

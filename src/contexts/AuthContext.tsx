@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-           'ngrok-skip-browser-warning': 'true',
+          'ngrok-skip-browser-warning': 'true',
         },
       });
       if (response.data.user) {
@@ -89,6 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         await fetchUserData();
+        router.push("/");
       } else {
         throw new Error(response.data.error || 'Login failed');
       }
@@ -112,31 +113,47 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null);
   };
 
+  const isBrowser = typeof window !== 'undefined';
   // Check authentication status only when token exists or changes
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+ // Create state for managing user login status
+const [hasTriedLogin, setHasTriedLogin] = useState(false);
+
+useEffect(() => {
+  if (!isBrowser) return;
+
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    // If the token exists and user hasn't tried to log in yet, we attempt to fetch the user
+    if (hasTriedLogin) {
       fetchUserData();
     } else {
-      setIsLoading(false); // No loading for unauthenticated users
+      setIsLoading(false); // Set loading to false immediately if it's a fresh state
     }
+  } else {
+    setIsLoading(false); // When no token is found, we simply stop loading
+    setUser(null);
+    setIsLoggedIn(false);
+  }
 
-    // Set up event listener for storage changes (for multi-tab support)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'token') {
-        if (e.newValue) {
-          fetchUserData();
-        } else {
-          setUser(null);
-          setIsLoggedIn(false);
-          setIsLoading(false);
-        }
+  const handleStorageChange = (e: StorageEvent) => {
+    if (e.key === 'token') {
+      if (e.newValue) {
+        setHasTriedLogin(true); // Set that the user is attempting to login
+        fetchUserData();
+      } else {
+        setUser(null);
+        setIsLoggedIn(false);
+        setIsLoading(false);
       }
-    };
+    }
+  };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  window.addEventListener('storage', handleStorageChange);
+  return () => window.removeEventListener('storage', handleStorageChange);
+}, [hasTriedLogin]); // Adding hasTriedLogin as dependency to control fetchUserData
+
+  
 
   // Set up axios interceptor for token handling
   useEffect(() => {

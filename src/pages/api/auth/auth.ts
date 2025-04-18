@@ -1,9 +1,9 @@
-export const BACKEND_URL = "https://342b-110-226-17-132.ngrok-free.app";
+export const BACKEND_URL = "https://f7fc-110-226-17-132.ngrok-free.app";
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
+// interface LoginCredentials {
+//   email: string;
+//   password: string;
+// }
 
 interface RegisterData {
   first_name: string;
@@ -19,23 +19,24 @@ interface AuthResponse {
 }
 
 
-export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json","ngrok-skip-browser-warning": "true" },
-      body: JSON.stringify(credentials),
-    });
+// export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+//   try {
+//     const response = await fetch(`${BACKEND_URL}/api/login`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json","ngrok-skip-browser-warning": "true" },
+//       body: JSON.stringify(credentials),
+//     });
 
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    return await response.json();
-  } catch (error) {
-    return { message: "Error logging in", error: error instanceof Error ? error.message : "Unknown error" };
-  }
-};
+//     if (!response.ok) {
+//       const result = await response.json();
+//       throw new Error(result.error || "Login failed");
+//     }
+    
+//     return await response.json();
+//   } catch (error) {
+//     return { message: "Error logging in", error: error instanceof Error ? error.message : "Unknown error" };
+//   }
+// };
 
 export const registerUser = async (userData: RegisterData): Promise<AuthResponse> => {
   try {

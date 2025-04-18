@@ -31,12 +31,12 @@ const Navbar = () => {
             <SheetContent side="left" className="px-0 pl-3">
               <div className="pt-2 pb-[30px]">
                 <Link href="/">
-                  <Image src="/virul-logo.svg" width={70} height={70} alt="virul" />
+                  <Image src="/virul-logo.svg" width={70} height={70} alt="virul"/>
                 </Link>
               </div>
               <hr className="bg-black w-auto mx-2 opacity-40" />
               <nav className="flex flex-col space-y-6 mt-3 ml-3">
-                <Link href="/about" className="text-[14px] font-[600]">
+                <Link href='/FindEvents' className="text-[14px] font-[600]">
                   Find Events
                 </Link>
                 <Link href="/" className="text-[14px] font-[600]">
@@ -58,7 +58,7 @@ const Navbar = () => {
           ) : isLoggedIn ? (
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="text-white font-[400] text-[16px]"
+              className="text-white font-[400] text-[16px] cursor-pointer"
             >
               {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()}
             </button>
@@ -76,7 +76,7 @@ const Navbar = () => {
 
         <div className="items-center gap-6 hidden lg:flex">
           <div className="flex items-center gap-6">
-            <Link href="/" className="text-white font-[400] text-[16px]">Find Events</Link>
+            <Link href='/FindEvents' className="text-white font-[400] text-[16px]">Find Events</Link>
             <Link href="/" className="text-white font-[400] text-[16px]">Help</Link>
           </div>
           <div className="flex items-center gap-3">
