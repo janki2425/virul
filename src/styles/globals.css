@@ -210,3 +210,25 @@ body {
     height: 371px;
   }
 }
+
+@media (min-width: 320px) {
+  .grid_custom{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+@media (min-width: 577px) {
+  .grid_custom{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 769px) {
+  .grid_custom{
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 993px) {
+  .grid_custom{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

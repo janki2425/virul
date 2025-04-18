@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 
-function forgot() {
+function Forgot() {
 
   return (
     <div className='relative'>
@@ -93,4 +93,4 @@ function forgot() {
   );
 }
 
-export default forgot;
+export default Forgot;

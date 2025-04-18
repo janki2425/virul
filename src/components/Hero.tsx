@@ -77,7 +77,7 @@ const HeroSection = () => {
               </div>
             </div>
             <div className="absolute top-1/2 -translate-y-1/2 right-1.5 lg:right-[5px] bg-white pr-0 pl-2 hidden lg:flex">
-              <div className="p-2 lg:py-[7px] bg-[#855fa7] font-[600] tracking-[0.5px] lg:px-4 flex items-center rounded lg:rounded-[4px] text-white text-sm gap-2">
+              <div className="p-2 lg:py-[7px] bg-[#855fa7] cursor-pointer font-[600] tracking-[0.5px] lg:px-4 flex items-center rounded lg:rounded-[4px] text-white text-sm gap-2">
                 Search
                 <Image
                   src={"/right-arrow.svg"}
