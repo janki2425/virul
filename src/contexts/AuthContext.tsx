@@ -114,8 +114,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const isBrowser = typeof window !== 'undefined';
-  // Check authentication status only when token exists or changes
- // Create state for managing user login status
+  
 const [hasTriedLogin, setHasTriedLogin] = useState(false);
 
 useEffect(() => {
@@ -124,14 +123,13 @@ useEffect(() => {
   const token = localStorage.getItem('token');
 
   if (token) {
-    // If the token exists and user hasn't tried to log in yet, we attempt to fetch the user
     if (hasTriedLogin) {
       fetchUserData();
     } else {
-      setIsLoading(false); // Set loading to false immediately if it's a fresh state
+      setIsLoading(false); 
     }
   } else {
-    setIsLoading(false); // When no token is found, we simply stop loading
+    setIsLoading(false);
     setUser(null);
     setIsLoggedIn(false);
   }
@@ -139,7 +137,7 @@ useEffect(() => {
   const handleStorageChange = (e: StorageEvent) => {
     if (e.key === 'token') {
       if (e.newValue) {
-        setHasTriedLogin(true); // Set that the user is attempting to login
+        setHasTriedLogin(true);
         fetchUserData();
       } else {
         setUser(null);

@@ -23,6 +23,11 @@ const Event = () => {
     return url.replace('https://342b-110-226-17-132.ngrok-free.app', `${BACKEND_URL}`);
   };
   
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+  
   
 
   useEffect(() => {
@@ -88,7 +93,7 @@ const Event = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/calendar.svg'} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.start_Date}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_Date)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/location.svg'} width={16} height={16} alt="event" />
