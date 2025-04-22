@@ -2,62 +2,52 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
+import { fetchEvents, EventType } from "@/utils/fetchEvents";
 
-type EventType = {
-  id: string;
-  name: string;
-  category:string;
-  short_Description:string;
-  image_Url: string;
-  start_Date: string;
-  address: string;
-  price: number;
+type EventProps = {
+  filters: {
+    name: string;
+    category: string;
+    start_date: string;
+    city: string;
+  };
 };
 
-const Event = () => {
+const Event = ({ filters }: EventProps) => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const getUpdatedImageUrl = (url: string) => {
-    return url.replace('https://342b-110-226-17-132.ngrok-free.app', `${BACKEND_URL}`);
-  };
   
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
   
+  const loadEvents = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
   
+      const data = await fetchEvents(filters);
+      console.log(data);
+      
+      setEvents(data);
+    } catch (err: any) {
+      console.error("Failed to load events:", err.response?.data || err.message);
+      setError("Failed to load events. Please check filters or try again.");
+      setEvents([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEvents = async () => {
-
-      try {
-        setIsLoading(true);
-        
-        const res = await axios.get(`${BACKEND_URL}/api/getall-events`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
-          },
-        });
-        
-        
-        setEvents(res.data.events);
-
-      } catch (err: any) {
-        console.error('Failed to load events:', err.response?.data || err.message);
-        setError('Failed to load events. Please check your authentication or try again later.');
-        setEvents([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
+    loadEvents();
+  }, [filters]);
+  
 
   if (isLoading) return <div className="text-center py-10">Loading events...</div>;
   if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
@@ -68,7 +58,7 @@ const Event = () => {
         <h2 className="text-[20px] font-[600]">Upcoming Events</h2>
         <div className="flex items-center">
           <p className="text-[16px] font-[100] text-[#EC248F] cursor-pointer">View all</p>
-          <Image src={'/view-more.svg'} width={30} height={30} alt="view all" className="" />
+          <Image src={'/view-more.svg'} width={30} height={30} alt="view all"/>
         </div>
       </div>
       <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
@@ -77,7 +67,7 @@ const Event = () => {
             <div key={event.id} className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg">
               <div className="rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
                 <Image
-                  src={getUpdatedImageUrl(event.image_Url)}
+                  src={`${BACKEND_URL}/${event.image_url}`}
                   width={280}
                   height={180}
                   alt="event"
@@ -89,15 +79,15 @@ const Event = () => {
                 <h2 className="text-[18px] font-[600] overflow-hidden line-clamp-2">{event.name}</h2>
                 <div className="flex items-center gap-2">
                   <Image src={'/subject.svg'} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.short_Description}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.short_description}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/calendar.svg'} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_Date)}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_date)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/location.svg'} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.address}</p>
+                  <p className="text-[14px] text-[#212529]">{event.address}, {event.city}</p>
                 </div>
               </div>
               <div className="flex absolute bottom-0 w-full items-center justify-center py-3 border border-t-[#e9ecef] rounded-b-[5px]">

@@ -8,10 +8,11 @@ type EventType = {
   id: string;
   name: string;
   category: string;
-  short_Description: string;
-  image_Url: string;
-  start_Date: string;
+  short_description: string;
+  image_url: string;
+  start_date: string;
   address: string;
+  city:string;
   price: number;
 };
 
@@ -20,23 +21,19 @@ const FindEvents = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     name: "",
     category: "",
-    start_Date: "",
-    end_Date: "",
+    start_date: "",
+    end_date: "",
     city: "",
     state: "",
-    minPrice: "",
-    maxPrice: "",
+    min_price: "",
+    max_price: "",
   });
 
-  const getUpdatedImageUrl = (url: string) => {
-    return url.replace(
-      "https://342b-110-226-17-132.ngrok-free.app",
-      `${BACKEND_URL}`
-    );
-  };
  
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
@@ -57,8 +54,11 @@ const FindEvents = () => {
         }
       });
 
+      queryParams.append("page", currentPage.toString());
+      queryParams.append("limit", "8"); 
+
       const res = await axios.get(
-        `${BACKEND_URL}/api/getevents-by-filter?${queryParams.toString()}`,
+        `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -68,6 +68,9 @@ const FindEvents = () => {
       );
 
       setEvents(res.data.data || []);
+      
+      setTotalPages(res.data.pagination.totalPages);
+
       
     } catch (err: any) {
       console.error("Failed to load events:", err.response?.data || err.message);
@@ -80,7 +83,7 @@ const FindEvents = () => {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [currentPage]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -89,26 +92,28 @@ const FindEvents = () => {
 
   const handleFilterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setCurrentPage(1);
     fetchEvents();
   };
   const resetFilter = () => {
     setFilters({
       name: "",
       category: "",
-      start_Date: "",
-      end_Date: "",
+      start_date: "",
+      end_date: "",
       city: "",
       state: "",
-      minPrice: "",
-      maxPrice: "",
+      min_price: "",
+      max_price: "",
     });
+    setCurrentPage(1);
   };
   useEffect(() => {
     const allEmpty = Object.values(filters).every((val) => val === "");
     if (allEmpty) {
       fetchEvents();
     } 
-  }, [filters]);
+  }, [currentPage,filters]);
     
 
 
@@ -127,12 +132,12 @@ const FindEvents = () => {
       <form onSubmit={handleFilterSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <input name="name" value={filters.name} onChange={handleInputChange} placeholder="Event Name" className="p-2 border" />
         <input name="category" value={filters.category} onChange={handleInputChange} placeholder="Category" className="p-2 border" />
-        <input type="date" name="start_Date" value={filters.start_Date} onChange={handleInputChange} className="p-2 border" />
-        <input type="date" name="end_Date" value={filters.end_Date} onChange={handleInputChange} className="p-2 border" />
+        <input type="date" name="start_date" value={filters.start_date} onChange={handleInputChange} className="p-2 border" />
+        <input type="date" name="end_date" value={filters.end_date} onChange={handleInputChange} className="p-2 border" />
         <input name="city" value={filters.city} onChange={handleInputChange} placeholder="City" className="p-2 border" />
         <input name="state" value={filters.state} onChange={handleInputChange} placeholder="State" className="p-2 border" />
-        <input name="minPrice" value={filters.minPrice} onChange={handleInputChange} placeholder="Min Price" className="p-2 border" />
-        <input name="maxPrice" value={filters.maxPrice} onChange={handleInputChange} placeholder="Max Price" className="p-2 border" />
+        <input name="min_price" value={filters.min_price} onChange={handleInputChange} placeholder="Min Price" className="p-2 border" />
+        <input name="max_price" value={filters.max_price} onChange={handleInputChange} placeholder="Max Price" className="p-2 border" />
           <button
             type="submit"
             className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
@@ -164,7 +169,7 @@ const FindEvents = () => {
             >
               <div className="rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
                 <Image
-                  src={getUpdatedImageUrl(event.image_Url)}
+                  src={`${BACKEND_URL}/${event.image_url}`}
                   width={280}
                   height={180}
                   alt="event"
@@ -178,15 +183,15 @@ const FindEvents = () => {
                 </h2>
                 <div className="flex items-center gap-2">
                   <Image src={"/subject.svg"} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.short_Description}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.short_description}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={"/calendar.svg"} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_Date)}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_date)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={"/location.svg"} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.address}</p>
+                  <p className="text-[14px] text-[#212529]">{event.address}, {event.city}</p>
                 </div>
               </div>
               <div className="flex absolute bottom-0 w-full items-center justify-center py-3 border border-t-[#e9ecef] rounded-b-[5px]">
@@ -199,6 +204,37 @@ const FindEvents = () => {
         <p className="text-center py-10">No events available.</p>
       )}
     </div>
+
+    {totalPages > 1 && (
+      <div className="flex justify-center gap-2 mt-6 mb-6">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-[#727272] text-black rounded disabled:opacity-50 cursor-pointer"
+        >
+          Prev
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-4 py-2 cursor-pointer rounded ${currentPage === i + 1 ? "bg-[#7059b5] text-white" : "bg-gray-200"}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-[#727272] text-black cursor-pointer rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+)}
+
     </>
   );
 };
