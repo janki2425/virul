@@ -1,8 +1,26 @@
 import Image from "next/image";
-import React from "react";
+import React, {useState} from "react";
+import Event from "./Event"; 
+
 
 const HeroSection = () => {
+  const [filters, setFilters] = useState({
+    name: '',
+    category: '',
+    start_date: '',
+    city: '',
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
+    <>
     <div
       className="relative w-full h-[350px] lg:h-[280px] flex justify-center bg-cover bg-center bg-no-repeat pt-[64px]"
       style={{ backgroundImage: "url('/hero.jpg')" }}
@@ -21,11 +39,14 @@ const HeroSection = () => {
         </p>
 
         {/* Input Fields */}
-        <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-[1px] mx-auto bg-[#ced4da] rounded overflow-hidden lg:max-w-[940px] max-w-[1280px]">
+        <form className="w-full grid grid-cols-2 lg:grid-cols-4 gap-[1px] mx-auto bg-[#ced4da] rounded overflow-hidden lg:max-w-[940px] max-w-[1280px]">
           <div className="relative w-full bg-white rounded-l border border-transparent">
             <input
               type="text"
-              placeholder="City or zip code"
+              name="city" 
+              value={filters.city} 
+              onChange={handleInputChange}
+              placeholder="City"
               className="text-black opacity-60 text-[16px] px-3 py-2 rounded-l w-full"
             />
             <div className="absolute w-[36px] top-3 right-0 bg-white">
@@ -40,22 +61,28 @@ const HeroSection = () => {
           </div>
           <div className="relative w-full bg-white rounded-r lg:rounded-none border border-transparent">
             <input
-              type="text"
+              type="date"
               placeholder="Date"
+              name="start_date" 
+              value={filters.start_date} 
+              onChange={handleInputChange}
               className="text-black opacity-60 text-[16px] px-3 py-2 w-full"
             />
-            <Image
+            {/* <Image
               src={"/date.svg"}
               width={20}
               height={20}
               alt="date"
               className="absolute top-3 right-[7px]"
-            />
+            /> */}
           </div>
           <div className="relative w-full col-span-2 bg-white sm:rounded lg:rounded-none lg:rounded-r border border-transparent">
             <input
               type="text"
-              placeholder="Search by events & organizers"
+              name="category" 
+              value={filters.category || filters.name} 
+              onChange={handleInputChange}
+              placeholder="Search by event's category"
               className="indent-7 text-black opacity-60 text-[16px] px-3 py-2 w-full"
             />
             <Image
@@ -89,9 +116,13 @@ const HeroSection = () => {
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
+    <div className="w-full z-20 mt-8">
+    <Event filters={filters} />
+  </div>
+  </>
   );
 };
 
