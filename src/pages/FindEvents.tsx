@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "@/pages/api/auth/auth";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import CustomLoader from "@/components/CustomLoader";
 
 type EventType = {
   id: string;
@@ -110,16 +112,12 @@ const FindEvents = () => {
   };
   useEffect(() => {
     const allEmpty = Object.values(filters).every((val) => val === "");
-    if (allEmpty) {
+    if (allEmpty) { 
       fetchEvents();
     } 
   }, [currentPage,filters]);
-    
 
-
-  if (isLoading)
-    return <div className="text-center py-10">Loading events...</div>;
-  
+  if (isLoading) return <CustomLoader/>;
 
   return (
     <>
@@ -233,8 +231,9 @@ const FindEvents = () => {
           Next
         </button>
       </div>
-)}
+      )}    
 
+      <Footer/>
     </>
   );
 };

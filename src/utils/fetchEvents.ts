@@ -20,7 +20,7 @@ export type EventType = {
   price: number;
 };
 
-export const fetchEvents = async (filters: FiltersType): Promise<EventType[]> => {
+export const fetchEvents = async (filters: FiltersType,page: number): Promise<{ data: EventType[]; totalPages: number }> => {
   const queryParams = new URLSearchParams();
 
   Object.entries(filters).forEach(([key, value]) => {
@@ -28,6 +28,12 @@ export const fetchEvents = async (filters: FiltersType): Promise<EventType[]> =>
       queryParams.append(key, value);
     }
   });
+
+  
+
+  queryParams.append("page", page.toString());
+  queryParams.append("limit", "8");
+  
 
   const res = await axios.get(
     `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`,
@@ -37,7 +43,15 @@ export const fetchEvents = async (filters: FiltersType): Promise<EventType[]> =>
         "ngrok-skip-browser-warning": "true",
       },
     }
-  );
+  ); 
 
-  return res.data.data || [];
+  // console.log("pages :", res);
+  // console.log("pages :", res.data);
+  // console.log("pages :", res.data.pagination);
+  
+
+  return {
+    data: res.data.data || [],
+    totalPages: res.data.pagination.totalPages || 1,
+  };
 };

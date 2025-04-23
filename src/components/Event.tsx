@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
 import { fetchEvents, EventType } from "@/utils/fetchEvents";
+import CustomLoader from './CustomLoader';
 
 type EventProps = {
   filters: {
@@ -31,29 +32,42 @@ const Event = ({ filters }: EventProps) => {
       setIsLoading(true);
       setError(null);
   
-      const data = await fetchEvents(filters);
-      console.log(data);
+      const start = Date.now();
+      const { data, totalPages } = await fetchEvents(filters, currentPage);
+      const elapsed = Date.now() - start;
+      const MIN_LOADING_TIME = 500;
+
+      console.log("total pages",totalPages);
       
-      setEvents(data);
+
+      setTimeout(() => {
+        setEvents(data);
+        setTotalPages(totalPages);
+        setIsLoading(false);
+      }, Math.max(MIN_LOADING_TIME - elapsed, 0));
+
     } catch (err: any) {
       console.error("Failed to load events:", err.response?.data || err.message);
-      setError("Failed to load events. Please check filters or try again.");
+      setTotalPages(1);
       setEvents([]);
-    } finally {
+      setError("Failed to load events");
       setIsLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
     loadEvents();
-  }, [filters]);
+  }, [currentPage,filters]);
   
 
-  if (isLoading) return <div className="text-center py-10">Loading events...</div>;
+  if (isLoading) return <CustomLoader/>;
+  
+  
   if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
 
   return (
-    <div className="px-4 mt-13 max-w-[1280px] mx-auto">
+    <>
+      <div className="px-4 mt-13 max-w-[1280px] mx-auto">
       <div className="flex items-center justify-between">
         <h2 className="text-[20px] font-[600]">Upcoming Events</h2>
         <div className="flex items-center">
@@ -62,7 +76,7 @@ const Event = ({ filters }: EventProps) => {
         </div>
       </div>
       <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
-        {events.length > 0 ? (
+        {events.length > 0 ?  (
           events.map((event: EventType, index) => (
             <div key={event.id} className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg">
               <div className="rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
@@ -100,6 +114,38 @@ const Event = ({ filters }: EventProps) => {
         )}
       </div>
     </div>
+
+    {totalPages > 1 && (
+      <div className="flex justify-center gap-2 mt-6 mb-6">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-[#727272] text-black rounded disabled:opacity-50 cursor-pointer"
+        >
+          Prev
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-4 py-2 cursor-pointer rounded ${currentPage === i + 1 ? "bg-[#7059b5] text-white" : "bg-gray-200"}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-[#727272] text-black cursor-pointer rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+      )}   
+    </>
+    
   );
 };
 

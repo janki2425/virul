@@ -1,4 +1,4 @@
-export const BACKEND_URL = "https://27b4-122-173-64-102.ngrok-free.app";
+export const BACKEND_URL = "https://ffd3-122-173-64-102.ngrok-free.app";
 
 interface RegisterData {
   first_name: string;
