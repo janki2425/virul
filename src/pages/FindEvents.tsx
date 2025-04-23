@@ -1,8 +1,11 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "./api/axiosInstance";
 import { BACKEND_URL } from "@/pages/api/auth/auth";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import CustomLoader from "@/components/CustomLoader";
+import debounce from 'lodash.debounce';
 
 type EventType = {
   id: string;
@@ -57,14 +60,8 @@ const FindEvents = () => {
       queryParams.append("page", currentPage.toString());
       queryParams.append("limit", "8"); 
 
-      const res = await axios.get(
+      const res = await axiosInstance.get(
         `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
       );
 
       setEvents(res.data.data || []);
@@ -74,7 +71,6 @@ const FindEvents = () => {
       
     } catch (err: any) {
       console.error("Failed to load events:", err.response?.data || err.message);
-      setError("Failed to load events. Please check filters or try again.");
       setEvents([]);
     } finally {
       setIsLoading(false);
@@ -85,13 +81,18 @@ const FindEvents = () => {
     fetchEvents();
   }, [currentPage]);
 
+  const debouncedSetFilters = React.useRef(
+    debounce((name: string, value: string) => {
+      setFilters((prev) => ({ ...prev, [name]: value }));
+    },500)
+  ).current;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
+    debouncedSetFilters(name, value);
   };
 
   const handleFilterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
     setCurrentPage(1);
     fetchEvents();
   };
@@ -110,15 +111,15 @@ const FindEvents = () => {
   };
   useEffect(() => {
     const allEmpty = Object.values(filters).every((val) => val === "");
-    if (allEmpty) {
+    if (allEmpty) { 
       fetchEvents();
     } 
-  }, [currentPage,filters]);
+  }, [currentPage]);
     
 
 
   if (isLoading)
-    return <div className="text-center py-10">Loading events...</div>;
+    return <CustomLoader/>;
   
 
   return (
@@ -233,8 +234,9 @@ const FindEvents = () => {
           Next
         </button>
       </div>
-)}
+      )}    
 
+      <Footer/>
     </>
   );
 };

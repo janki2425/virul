@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useMutation } from '@tanstack/react-query';
+import axiosInstance from '../api/axiosInstance';
 import { BACKEND_URL } from '../api/auth/auth';
 
 async function registerUser(formData: {
@@ -14,19 +15,8 @@ async function registerUser(formData: {
   email: string;
   password: string;
 }) {
-  const res = await fetch(`${BACKEND_URL}/api/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(formData),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || 'Signup failed');
-  }
-
-  return data;
+  const res=await axiosInstance.post(`${BACKEND_URL}/api/register`,formData);
+  return res.data;
 }
 
 function Signup() {
@@ -42,7 +32,6 @@ function Signup() {
       router.push('/auth/Login');
     },
     onError: (error: any) => {
-      setError(error.message);
       toast.error(error.message);
     },
   });

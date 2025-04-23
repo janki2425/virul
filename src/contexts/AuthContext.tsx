@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import axiosInstance from '@/pages/api/axiosInstance';
 import { useRouter } from 'next/router';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
 
@@ -53,19 +53,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setIsLoading(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-      });
+      const response = await axiosInstance.get(`${BACKEND_URL}/api/user`);
+      console.log("user data : ",response.data.user);
+      
       if (response.data.user) {
         setUser(response.data.user);
         setIsLoggedIn(true);
-      } else {
-        setError('Invalid API response format.');
-      }
+      } 
     } catch (err: any) {
       console.error('Auth error:', err.response?.data);
       if (err.response?.data?.error === 'Invalid token') {
@@ -85,7 +79,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/login`, { email, password });
+      const response = await axiosInstance.post(`${BACKEND_URL}/api/login`, { email, password });
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         await fetchUserData();
@@ -149,29 +143,8 @@ useEffect(() => {
 
   window.addEventListener('storage', handleStorageChange);
   return () => window.removeEventListener('storage', handleStorageChange);
-}, [hasTriedLogin]); // Adding hasTriedLogin as dependency to control fetchUserData
+}, [hasTriedLogin]);  
 
-  
-
-  // Set up axios interceptor for token handling
-  useEffect(() => {
-    const interceptor = axios.interceptors.response.use(
-      response => response,
-      error => {
-        if (error.response?.status === 401) {
-          if (error.response.data?.error === 'Invalid token') {
-            localStorage.removeItem('token');
-            setUser(null);
-            setIsLoggedIn(false);
-            router.push('/auth/Login');
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-
-    return () => axios.interceptors.response.eject(interceptor);
-  }, [router]);
 
   const value = {
     user,
