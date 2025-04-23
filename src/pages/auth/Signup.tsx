@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useMutation } from '@tanstack/react-query';
-import { BACKEND_URL } from '../api/auth/auth';
 import axiosInstance from '../api/axiosInstance';
+import { BACKEND_URL } from '../api/auth/auth';
 
 async function registerUser(formData: {
   first_name: string;
@@ -15,7 +15,7 @@ async function registerUser(formData: {
   email: string;
   password: string;
 }) {
-  const res=await axiosInstance.post('api/register',formData);
+  const res=await axiosInstance.post(`${BACKEND_URL}/api/register`,formData);
   return res.data;
 }
 
@@ -32,7 +32,6 @@ function Signup() {
       router.push('/auth/Login');
     },
     onError: (error: any) => {
-      setError(error.message);
       toast.error(error.message);
     },
   });

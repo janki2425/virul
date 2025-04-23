@@ -1,9 +1,9 @@
-import axios from "axios";
+import axiosInstance from "@/pages/api/axiosInstance";
 import { BACKEND_URL } from "@/pages/api/auth/auth";
 
+
 export type FiltersType = {
-  name: string;
-  category: string;
+  query:string;
   start_date: string;
   city: string;
 };
@@ -34,24 +34,16 @@ export const fetchEvents = async (filters: FiltersType,page: number): Promise<{ 
   queryParams.append("page", page.toString());
   queryParams.append("limit", "8");
   
-
-  const res = await axios.get(
-    `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-      },
-    }
-  ); 
-
-  // console.log("pages :", res);
-  // console.log("pages :", res.data);
-  // console.log("pages :", res.data.pagination);
-  
-
-  return {
-    data: res.data.data || [],
-    totalPages: res.data.pagination.totalPages || 1,
-  };
+  try{
+    const res = await axiosInstance.get(
+      `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`
+      ); 
+    return {
+      data: res.data.data || [],
+      totalPages: res.data.pagination.totalPages || 1,
+    };
+  }catch (error: any) {
+    console.error("Failed to fetch events:", error.response?.data || error.message);
+    return { data: [], totalPages: 1 };
+  }
 };
