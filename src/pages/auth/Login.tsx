@@ -65,7 +65,7 @@ function Login() {
               <div>
                 <label htmlFor="password" className="flex justify-between text-[12px] font-[400] text-[#6F7881]">
                   Password
-                  <Link href={'/auth/Forgot'} className="text-pink-500 text-[12px]">
+                  <Link href={'/auth/Reset'} className="text-pink-500 text-[12px]">
                     Forgot password?
                   </Link>
                 </label>

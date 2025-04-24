@@ -1,4 +1,4 @@
-export const BACKEND_URL = "https://a8eb-122-173-64-102.ngrok-free.app";
+export const BACKEND_URL = "https://33a9-122-173-64-102.ngrok-free.app";
 import axiosInstance from "../axiosInstance";
 
 interface RegisterData {
@@ -30,3 +30,22 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
   }
 };
 
+
+export const forgetPassword = async ({ email }: { email: string }) => {
+  const res = await axiosInstance.post<AuthResponse>(`${BACKEND_URL}/api/forget-password`,{email});
+  return res.data;
+};
+
+export const resetPassword = async (data: {
+  otp: string;
+  password: string;
+  confirmPassword: string;
+}) => {
+  const res = await axiosInstance.post<AuthResponse>(`${BACKEND_URL}/api/reset-password?reset_password_otp=${data.otp}`,
+    {
+      newPassword: data.password,
+      confirmPassword: data.confirmPassword,
+    }
+  );
+  return res.data;
+};

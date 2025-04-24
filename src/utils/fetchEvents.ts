@@ -1,7 +1,6 @@
 import axiosInstance from "@/pages/api/axiosInstance";
 import { BACKEND_URL } from "@/pages/api/auth/auth";
 
-
 export type FiltersType = {
   query:string;
   start_date: string;
@@ -28,8 +27,6 @@ export const fetchEvents = async (filters: FiltersType,page: number): Promise<{ 
       queryParams.append(key, value);
     }
   });
-
-  
 
   queryParams.append("page", page.toString());
   queryParams.append("limit", "8");

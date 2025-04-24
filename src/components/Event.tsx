@@ -118,7 +118,7 @@
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6 mb-6">
+        <div className="flex justify-center items-center gap-2 mt-12 mb-3">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}

@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const ngrokHost = 'a8eb-122-173-64-102.ngrok-free.app';
+const ngrokHost = '33a9-122-173-64-102.ngrok-free.app';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

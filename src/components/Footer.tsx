@@ -21,7 +21,7 @@ const sections = [
 
 const Footer = () => {
   return (
-    <footer className="mt-20 border pb-8 border-[#e9ecef] bg-[#f8f9fa] w-full">
+    <footer className="mt-8 border pb-8 border-[#e9ecef] bg-[#f8f9fa] w-full">
       <div className="max-w-[1280px] w-full pt-10 px-5 mx-auto">
         <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 xl:gap-[300px]">
           {/* Left Section */}
