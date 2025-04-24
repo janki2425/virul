@@ -84,7 +84,7 @@ const FindEvents = () => {
   const debouncedSetFilters = React.useRef(
     debounce((name: string, value: string) => {
       setFilters((prev) => ({ ...prev, [name]: value }));
-    },500)
+    },200)
   ).current;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

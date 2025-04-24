@@ -1,4 +1,4 @@
-export const BACKEND_URL = "https://a8eb-122-173-64-102.ngrok-free.app";
+export const BACKEND_URL = "https://ebc3-122-173-64-102.ngrok-free.app";
 import axiosInstance from "../axiosInstance";
 
 interface RegisterData {

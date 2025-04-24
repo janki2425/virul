@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Event from "./Event";
+import debounce from "lodash.debounce";
 
 const HeroSection = () => {
   // Local state for input fields
@@ -17,11 +18,17 @@ const HeroSection = () => {
     city: "",
   });
 
+  const debouncedSetFilters = React.useRef(
+      debounce((name: string, value: string) => {
+        setInputValues((prev) => ({ ...prev, [name]: value }));
+      },200)
+    ).current;
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setInputValues((prev) => ({ ...prev, [name]: value }));
+    debouncedSetFilters(name, value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
