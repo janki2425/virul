@@ -11,7 +11,7 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({ email: '', password: '' });
     const router = useRouter();
-    const { login, error, clearError, isLoading } = useAuth();
+    const { login, error, clearError, isPending } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -30,14 +30,14 @@ function Login() {
       <div className='relative'>
         <div className='absolute h_custom top-0 w-full h-[130px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]'></div>
         <div className="min-h-screen flex justify-center">
-          <div className="absolute top-[70px] mx-auto flex flex-col gap-1 bg-[#F8F8F8] z-20 shadow-md pt-8 pb-11 px-6 w-full max-w-[280px] sm:max-w-[340px] md:max-w-[466px]">
+          <div className="absolute top-[70px] mx-auto flex flex-col gap-1 bg-[#F8F8F8] z-20 shadow-md pt-8 pb-11 px-6 w-full w_custom">
             <Link href="/">
                 <Image src="/virul-logo.svg" width={70} height={70} alt="virul"  className='mx-auto mt-[11px]'/>
             </Link>
             <div className='leading-6'>
                 <h2 className="text-[24px] font-[700] text-[#0f0f0f] text-center mt-6 tracking-tight">Log in</h2>
                 <p className="text-center text-[14px] text-[#6F7881] mb-2">
-                Don't have an account?{' '}
+                Don't have an account?{" "}
                 <Link href={"/auth/Signup"} className="text-pink-500 font-medium hover:underline">
                     Sign up
                 </Link>
@@ -93,10 +93,10 @@ function Login() {
 
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`w-full ${isLoading ? 'bg-pink-300' : 'bg-[#EC248F]'} mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-semibold transition`}
+                disabled={isPending}
+                className={`w-full ${isPending ? 'bg-pink-300' : 'bg-[#EC248F]'} mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-semibold transition`}
               >
-                {isLoading ? 'Logging in...' : 'Log in'}
+                {isPending ? 'Logging in...' : 'Log in'}
               </button>
             </form>
 

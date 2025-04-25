@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState ,useRef } from "react";
 import Event from "./Event";
 import debounce from "lodash.debounce";
 
@@ -18,25 +18,32 @@ const HeroSection = () => {
     city: "",
   });
 
-  const debouncedSetFilters = React.useRef(
-      debounce((name: string, value: string) => {
-        setInputValues((prev) => ({ ...prev, [name]: value }));
-      },200)
+  const debouncedSetFilters = useRef(
+      debounce((newFilters) => {
+        setFilters(newFilters);
+      },500)
     ).current;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    debouncedSetFilters(name, value);
+    setInputValues((prev)=>({...prev,[name]:value}));
+    debouncedSetFilters({...inputValues,[name]:value});
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    debouncedSetFilters.cancel();
     setFilters(inputValues);
     console.log("Filters applied:", inputValues);
   };
+
+   useEffect(()=>{
+      return()=>{
+        debouncedSetFilters.cancel();
+      };
+    },[debouncedSetFilters])
 
   return (
     <>

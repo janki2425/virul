@@ -8,11 +8,11 @@ const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
       <ToastContainer position="top-right" autoClose={3000} />
+      </AuthProvider>
     </QueryClientProvider>
-    </AuthProvider>
   );
 }

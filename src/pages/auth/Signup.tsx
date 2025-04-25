@@ -7,7 +7,6 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useMutation } from '@tanstack/react-query';
 import axiosInstance from '../api/axiosInstance';
-import { BACKEND_URL } from '../api/auth/auth';
 
 async function registerUser(formData: {
   first_name: string;
@@ -15,7 +14,7 @@ async function registerUser(formData: {
   email: string;
   password: string;
 }) {
-  const res=await axiosInstance.post(`${BACKEND_URL}/api/register`,formData);
+  const res=await axiosInstance.post(`/api/register`,formData);
   return res.data;
 }
 
@@ -47,17 +46,17 @@ function Signup() {
     <div className='absolute h_custom top-0 w-full h-[130px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]'></div>
     <div className="min-h-screen flex justify-center">
 
-      <div className="absolute top-[70px] mx-auto flex flex-col gap-1 bg-[#F8F8F8] z-20 shadow-md pt-8 pb-11 px-6 md:px-14 w-full max-w-[280px] sm:max-w-[340px] md:max-w-[466px]">
+      <div className="absolute top-[70px] mx-auto flex flex-col gap-1 bg-[#F8F8F8] z-20 shadow-md pt-8 pb-11 px-6 md:px-14 w-full w_custom">
         <Link href="/">
             <Image src="/virul-logo.svg" width={70} height={70} alt="virul"  className='mx-auto mt-[11px]'/>
         </Link>
         <div className='leading-5'>
             <h2 className="text-[24px] font-[700] text-[#0f0f0f] text-center mt-6 md:mt-5 tracking-[-0.2px] leading-8">Great events start with Virul</h2>
             <p className="text-center text-[14px] text-[#6F7881] mb-2">
-            Already have an account?{' '}
-            <Link href="/auth/Login" className="text-pink-500 font-medium hover:underline">
-                Log in
-            </Link>
+              Already have an account?{' '}
+              <Link href="/auth/Login" className="text-pink-500 font-medium hover:underline">
+                  Log in
+              </Link>
             </p>
         </div>
 

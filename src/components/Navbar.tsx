@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
-  const { user, isLoggedIn, isLoading, logout } = useAuth();
+  const { user, isLoggedIn, isPending, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -52,7 +52,7 @@ const Navbar = () => {
         </Link>
       
         <div className="lg:hidden">
-          {isLoading ? (
+          {isPending ? (
             
             <span className="w-6 h-6"></span>
           ) : isLoggedIn ? (
@@ -80,7 +80,7 @@ const Navbar = () => {
             <Link href="/" className="text-white font-[400] text-[16px]">Help</Link>
           </div>
           <div className="flex items-center gap-3">
-            {isLoading ? (
+            {isPending ? (
               // Show a subtle loading indicator or nothing while checking auth
               <span className="w-6 h-6"></span>
             ) : isLoggedIn ? (

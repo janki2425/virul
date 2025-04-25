@@ -3,6 +3,7 @@
   import { BACKEND_URL } from '@/pages/api/auth/auth';
   import { fetchEvents, EventType } from "@/utils/fetchEvents";
   import CustomLoader from './CustomLoader';
+import { type } from 'os';
 
   type EventProps = {
     filters: {
@@ -11,6 +12,7 @@
       city: string;
     };
   };
+
 
   const Event = ({ filters }: EventProps) => {
     const [events, setEvents] = useState<EventType[]>([]);
@@ -42,7 +44,7 @@
           setIsLoading(false);
         }, Math.max(MIN_LOADING_TIME - elapsed, 0));
 
-      } catch (err: any) {
+      } catch (err:any) {
         console.error("Failed to load events:", err.response?.data || err.message);
         setTotalPages(1);
         setEvents([]);
@@ -60,7 +62,7 @@
       if (allEmpty) { 
         loadEvents();
       } 
-    }, [currentPage]);
+    },[currentPage]);
 
   
 
@@ -79,7 +81,7 @@
         </div>
         <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
           {events.length > 0 ?  (
-            events.map((event: EventType, index) => (
+            events.map((event: EventType) => (
               <div key={event.id} className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg">
                 <div className="rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
                   <Image

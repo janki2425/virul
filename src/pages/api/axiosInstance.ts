@@ -1,17 +1,22 @@
 import { BACKEND_URL } from '../api/auth/auth';
 import axios from 'axios';
-import { config } from 'process';
+// import { config } from 'process';
 
-const axiosInstance = axios.create();
+const axiosInstance = axios.create({
+  baseURL : BACKEND_URL,
+  headers:{
+    'Content-Type':'Content-Type',
+    'ngrok-skip-browser-warning':'true'
+  }
+}
+);
 
 axiosInstance.interceptors.request.use(
-  config=>{
+  (config)=>{
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if(token){
         config.headers.Authorization = `Bearer ${token}`;
     }
-    config.headers['Content-Type'] = 'application/json';
-    config.headers['ngrok-skip-browser-warning'] = 'true';
     return config;
   },
   (error)=>Promise.reject(error)

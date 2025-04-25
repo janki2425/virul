@@ -190,6 +190,7 @@ body {
   }
 }
 
+/* custom height gradiant (auth) */
 @media (min-width: 1024px) {
   .h_custom {
     height: 173px;
@@ -211,6 +212,25 @@ body {
   }
 }
 
+/* custom width (auth) */
+@media (min-width: 320px) {
+  .w_custom{
+    max-width: 280px;
+  }
+}
+@media (min-width: 380px) {
+  .w_custom{
+    max-width: 380px;
+  }
+}
+@media (min-width: 470px) {
+  .w_custom{
+    max-width: 466px;
+  }
+}
+
+
+/* events cards grid */
 @media (min-width: 320px) {
   .grid_custom{
     display: grid;
