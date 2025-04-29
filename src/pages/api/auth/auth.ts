@@ -32,7 +32,7 @@ export const registerUser = async (userData: RegisterData): Promise<AuthResponse
 
 
 export const forgetPassword = async ({ email }: { email: string }) => {
-  const res = await axiosInstance.post<AuthResponse>(`${BACKEND_URL}/api/forget-password`,{email});
+  const res = await axiosInstance.post<AuthResponse>(`api/forget-password`,{email});
   return res.data;
 };
 
@@ -41,7 +41,7 @@ export const resetPassword = async (data: {
   password: string;
   confirmPassword: string;
 }) => {
-  const res = await axiosInstance.post<AuthResponse>(`${BACKEND_URL}/api/reset-password?reset_password_otp=${data.otp}`,
+  const res = await axiosInstance.post<AuthResponse>(`api/reset-password?reset_password_otp=${data.otp}`,
     {
       newPassword: data.password,
       confirmPassword: data.confirmPassword,
