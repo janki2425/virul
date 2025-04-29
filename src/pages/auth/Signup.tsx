@@ -20,7 +20,7 @@ async function registerUser(formData: {
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({first_name: '',last_name: '',email: '',password: '',});
+  const [form, setForm] = useState({first_name: '',last_name: '',email: '',password: ''});
   const [error, setError] = useState('');
   const router = useRouter();
 

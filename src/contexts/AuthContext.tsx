@@ -73,6 +73,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const queryClient = useQueryClient();
   const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('token');
 
+
   const { data, isPending, error: queryError, isError } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUserData,
@@ -96,6 +97,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [isError, queryError, router]);
 
   const user: UserType | null = data ?? null;
+  const isLoggedIn = !!user;
+  const [error, setError] = useState<string | null>(null);
 
   const loginMutation = useMutation({
     mutationFn:loginUser,
@@ -114,9 +117,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
     },
   });
-
-  const [error, setError] = useState<string | null>(null);
-  const isLoggedIn = !!user;
   
   // Login function
   const login = async (email: string, password: string) => {
@@ -127,10 +127,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Logout function
   const logout = () => {
     localStorage.removeItem('token');
-    queryClient.setQueryData(['user'], null);
-    setHasTriedLogin(false);
+    queryClient.setQueryData(['user'], null); 
+    queryClient.removeQueries({ queryKey: ['user'] });
     setError(null);
-    router.push('/');
+    router.push('/').then(() => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    });
   };
 
   // Clear error
@@ -140,39 +142,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const isBrowser = typeof window !== 'undefined';
   
-  const [hasTriedLogin, setHasTriedLogin] = useState(false);
 
 useEffect(() => {
   if (!isBrowser) return;
 
-  // const token = localStorage.getItem('token');
-
-  // if (token) {
-  //   if (hasTriedLogin) {
-  //     queryClient.invalidateQueries({ queryKey: ['user'] });
-  //   }
-  // } else {
-  //   queryClient.setQueryData(['user'], null);
-  // }
-
-  const handleStorageChange = (e: StorageEvent) => {
-    if (e.key === 'token') {
-      if (e.newValue) {
-        setHasTriedLogin(true);
-        queryClient.invalidateQueries({ queryKey: ['user'] });
-      } 
-      else {
-        console.log("no token");
-        
-        setHasTriedLogin(false);
-        queryClient.setQueryData(['user'], null);
-      }
-    }
-  };
-
-  window.addEventListener('storage', handleStorageChange);
-  return () => window.removeEventListener('storage', handleStorageChange);
-}, [queryClient,hasTriedLogin]);  
+  if (!hasToken) {
+    queryClient.setQueryData(['user'], null); 
+  }
+}, [hasToken, queryClient]);
 
 
   const value: AuthContextType = {

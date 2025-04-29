@@ -5,7 +5,7 @@ import axios from 'axios';
 const axiosInstance = axios.create({
   baseURL : BACKEND_URL,
   headers:{
-    'Content-Type':'Content-Type',
+    'Content-Type':'application/json',
     'ngrok-skip-browser-warning':'true'
   }
 }

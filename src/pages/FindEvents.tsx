@@ -71,7 +71,7 @@ const FindEvents = () => {
       queryParams.append("limit", "8"); 
 
       const res = await axiosInstance.get(
-        `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`,
+        `api/getall-events?${queryParams.toString()}`,
       );
 
       setEvents(res.data.data || []);

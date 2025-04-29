@@ -4,16 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const { user, isLoggedIn, isPending, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setShowDropdown(false);
+    }
+  }, [isLoggedIn]);
+
   const handleLogout = () => {
-    logout();
     setShowDropdown(false);
+    logout();
   };
 
   return (
@@ -22,10 +28,10 @@ const Navbar = () => {
         <div className="lg:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="flex flex-col gap-[4px] p-2 justify-start items-start">
-                <span className="w-[18px] h-[2px] bg-white rounded-sm"></span>
-                <span className="w-[18px] h-[2px] bg-white rounded-sm"></span>
-                <span className="w-[18px] h-[2px] bg-white rounded-sm"></span>
+              <Button variant="ghost" size="icon" className="flex flex-col gap-[4px] p-2 justify-start items-start rounded-full bg-transparent hover:bg-gray-600">
+                <span className="w-[18px] h-[2px] bg-white mx-auto mt-1 rounded-sm"></span>
+                <span className="w-[18px] h-[2px] bg-white mx-auto rounded-sm"></span>
+                <span className="w-[18px] h-[2px] bg-white mx-auto rounded-sm"></span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="px-0 pl-3">
@@ -68,7 +74,7 @@ const Navbar = () => {
             </Link>
           )}
           {showDropdown && isLoggedIn && (
-            <div className="absolute bg-white text-black p-2 rounded-md mt-2 right-0">
+            <div className="absolute right-0 bg-white text-black p-2 rounded-md mt-2 z-50">
               <button onClick={handleLogout} className="block text-sm px-4 py-2">Log out</button>
             </div>
           )}
