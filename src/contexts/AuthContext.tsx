@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axiosInstance from '@/pages/api/axiosInstance';
 import { useRouter } from 'next/router';
-import { BACKEND_URL } from '@/pages/api/auth/auth';
+import { AxiosError } from 'axios';
+import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 
 // Define types
 interface UserType {
@@ -11,10 +12,15 @@ interface UserType {
   email?: string;
 }
 
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
 interface AuthContextType {
   user: UserType | null;
   isLoggedIn: boolean;
-  isLoading: boolean;
+  isPending: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -25,81 +31,108 @@ interface AuthContextType {
 const defaultContextValue: AuthContextType = {
   user: null,
   isLoggedIn: false,
-  isLoading: false, // Start as false for first-time users
+  isPending: false,
   error: null,
   login: async () => {},
   logout: () => {},
   clearError: () => {}
 };
 
+
+
 // Create the context
 const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
+//fetch user data function for useQuery
+const fetchUserData = async(): Promise<UserType>=>{
+  const token = localStorage.getItem('token');
+  if(!token){
+    throw new Error('No token found');
+  }
+  const response = await axiosInstance.get('/api/user');
+
+  const userData: UserType = response.data.user;
+  if (!userData.id || !userData.first_name || !userData.last_name) {
+    throw new Error('Invalid user data');
+  }
+  return userData;
+}
+
+//login function for useMutation
+const loginUser = async({email,password}:{email:string;password:string})=>{
+  const response=await axiosInstance.post('/api/login',{email,password});
+  if(!response.data.token){
+    throw new Error(response.data.error || 'Login failed');
+  }
+  return response.data.token;
+}
+
 // Create provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserType | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('token');
 
-  // Function to fetch user data
-  const fetchUserData = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
 
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(`${BACKEND_URL}/api/user`);
-      console.log("user data : ",response.data.user);
-      
-      if (response.data.user) {
-        setUser(response.data.user);
-        setIsLoggedIn(true);
-      } 
-    } catch (err: any) {
-      console.error('Auth error:', err.response?.data);
-      if (err.response?.data?.error === 'Invalid token') {
+  const { data, isPending, error: queryError, isError } = useQuery({
+    queryKey: ['user'],
+    queryFn: fetchUserData,
+    enabled: hasToken,
+    retry: false,
+  });
+  
+  useEffect(() => {
+    if (isError && queryError) {
+      const responseData = (queryError as AxiosError<ApiErrorResponse>).response?.data;
+      const errorMessage = responseData?.message || responseData?.error || queryError.message;
+  
+      if (queryError.message === 'No token found' || responseData?.error === 'Invalid token') {
         localStorage.removeItem('token');
         setError('Session expired. Please log in again.');
         router.push('/auth/Login');
       } else {
-        setError(`Authentication error: ${err.response?.data?.message || err.message}`);
+        setError(`Authentication error: ${errorMessage}`);
       }
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [isError, queryError, router]);
 
+  const user: UserType | null = data ?? null;
+  const isLoggedIn = !!user;
+  const [error, setError] = useState<string | null>(null);
+
+  const loginMutation = useMutation({
+    mutationFn:loginUser,
+    onSuccess:(token)=>{
+      localStorage.setItem('token', token);
+      console.log("has token");
+      
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      router.push('/');
+    },
+    onError:(err:AxiosError<ApiErrorResponse>)=>{
+      const responseData = err.response?.data;
+      const errorMessage = responseData?.message || responseData?.error || err.message;
+      setError(errorMessage || 'Login failed');
+      console.log("no token");
+      
+    },
+  });
+  
   // Login function
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
     setError(null);
-    try {
-      const response = await axiosInstance.post(`${BACKEND_URL}/api/login`, { email, password });
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        await fetchUserData();
-        router.push("/");
-      } else {
-        throw new Error(response.data.error || 'Login failed');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'Login failed');
-      setIsLoading(false);
-      throw err;
-    }
+    await loginMutation.mutateAsync({ email, password });
   };
 
   // Logout function
   const logout = () => {
     localStorage.removeItem('token');
-    setUser(null);
-    setIsLoggedIn(false);
-    router.push('/');
+    queryClient.setQueryData(['user'], null); 
+    queryClient.removeQueries({ queryKey: ['user'] });
+    setError(null);
+    router.push('/').then(() => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    });
   };
 
   // Clear error
@@ -109,48 +142,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const isBrowser = typeof window !== 'undefined';
   
-const [hasTriedLogin, setHasTriedLogin] = useState(false);
 
 useEffect(() => {
   if (!isBrowser) return;
 
-  const token = localStorage.getItem('token');
-
-  if (token) {
-    if (hasTriedLogin) {
-      fetchUserData();
-    } else {
-      setIsLoading(false); 
-    }
-  } else {
-    setIsLoading(false);
-    setUser(null);
-    setIsLoggedIn(false);
+  if (!hasToken) {
+    queryClient.setQueryData(['user'], null); 
   }
-
-  const handleStorageChange = (e: StorageEvent) => {
-    if (e.key === 'token') {
-      if (e.newValue) {
-        setHasTriedLogin(true);
-        fetchUserData();
-      } else {
-        setUser(null);
-        setIsLoggedIn(false);
-        setIsLoading(false);
-      }
-    }
-  };
-
-  window.addEventListener('storage', handleStorageChange);
-  return () => window.removeEventListener('storage', handleStorageChange);
-}, [hasTriedLogin]);  
+}, [hasToken, queryClient]);
 
 
-  const value = {
+  const value: AuthContextType = {
     user,
     isLoggedIn,
-    isLoading,
-    error,
+    isPending:isPending || loginMutation.isPending,
+    error: error || (queryError?.message || null),
     login,
     logout,
     clearError,

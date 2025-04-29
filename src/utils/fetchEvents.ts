@@ -33,7 +33,7 @@ export const fetchEvents = async (filters: FiltersType,page: number): Promise<{ 
   
   try{
     const res = await axiosInstance.get(
-      `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`
+      `api/getall-events?${queryParams.toString()}`
       ); 
     return {
       data: res.data.data || [],

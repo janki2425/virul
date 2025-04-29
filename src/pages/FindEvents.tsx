@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import axiosInstance from "./api/axiosInstance";
 import { BACKEND_URL } from "@/pages/api/auth/auth";
 import Navbar from "@/components/Navbar";
@@ -22,10 +22,20 @@ type EventType = {
 
 const FindEvents = () => {
   const [events, setEvents] = useState<EventType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [inputValues, setInputValues] = useState({
+    name: "",
+    category: "",
+    start_date: "",
+    end_date: "",
+    city: "",
+    state: "",
+    min_price: "",
+    max_price: "",
+  });
   const [filters, setFilters] = useState({
     name: "",
     category: "",
@@ -61,7 +71,7 @@ const FindEvents = () => {
       queryParams.append("limit", "8"); 
 
       const res = await axiosInstance.get(
-        `${BACKEND_URL}/api/getall-events?${queryParams.toString()}`,
+        `api/getall-events?${queryParams.toString()}`,
       );
 
       setEvents(res.data.data || []);
@@ -79,24 +89,39 @@ const FindEvents = () => {
 
   useEffect(() => {
     fetchEvents();
-  }, [currentPage]);
+  }, [filters,currentPage]);
 
-  const debouncedSetFilters = React.useRef(
-    debounce((name: string, value: string) => {
-      setFilters((prev) => ({ ...prev, [name]: value }));
-    },200)
+  const debouncedSetFilters = useRef(
+    debounce((newFilters) => {
+      setFilters(newFilters);
+      setCurrentPage(1);
+    },500)
   ).current;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    debouncedSetFilters(name, value);
+    setInputValues((prev)=>({...prev,[name]:value}));
+    debouncedSetFilters({...inputValues,[name]:value});
   };
 
-  const handleFilterSubmit = (e: React.FormEvent) => {
-    setCurrentPage(1);
-    fetchEvents();
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   debouncedSetFilters.cancel();
+  //   setFilters(inputValues);
+  //   setCurrentPage(1);
+  //   fetchEvents();
+  // };
   const resetFilter = () => {
+    setInputValues({
+      name: "",
+      category: "",
+      start_date: "",
+      end_date: "",
+      city: "",
+      state: "",
+      min_price: "",
+      max_price: "",
+    });
     setFilters({
       name: "",
       category: "",
@@ -109,13 +134,12 @@ const FindEvents = () => {
     });
     setCurrentPage(1);
   };
-  useEffect(() => {
-    const allEmpty = Object.values(filters).every((val) => val === "");
-    if (allEmpty) { 
-      fetchEvents();
-    } 
-  }, [currentPage]);
-    
+
+  useEffect(()=>{
+    return()=>{
+      debouncedSetFilters.cancel();
+    };
+  },[debouncedSetFilters])
 
 
   if (isLoading)
@@ -130,31 +154,31 @@ const FindEvents = () => {
     <div className="px-4 mt-8 pb-5 max-w-[1280px] mx-auto">
       
       {/* Filter Form */}
-      <form onSubmit={handleFilterSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <input name="name" value={filters.name} onChange={handleInputChange} placeholder="Event Name" className="p-2 border" />
-        <input name="category" value={filters.category} onChange={handleInputChange} placeholder="Category" className="p-2 border" />
-        <input type="date" name="start_date" value={filters.start_date} onChange={handleInputChange} className="p-2 border" />
-        <input type="date" name="end_date" value={filters.end_date} onChange={handleInputChange} className="p-2 border" />
-        <input name="city" value={filters.city} onChange={handleInputChange} placeholder="City" className="p-2 border" />
-        <input name="state" value={filters.state} onChange={handleInputChange} placeholder="State" className="p-2 border" />
-        <input name="min_price" value={filters.min_price} onChange={handleInputChange} placeholder="Min Price" className="p-2 border" />
-        <input name="max_price" value={filters.max_price} onChange={handleInputChange} placeholder="Max Price" className="p-2 border" />
-          <button
+      <form
+      //  onSubmit={handleSubmit} 
+       className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <input name="name" value={inputValues.name} onChange={handleInputChange} placeholder="Event Name" className="p-2 border" autoFocus={inputValues.name.length > 0}/>
+        <input name="category" value={inputValues.category} onChange={handleInputChange} placeholder="Category" className="p-2 border" autoFocus={inputValues.category.length > 0}/>
+        <input type="date" name="start_date" value={inputValues.start_date} onChange={handleInputChange} className="p-2 border" autoFocus={inputValues.start_date.length > 0}/>
+        <input type="date" name="end_date" value={inputValues.end_date} onChange={handleInputChange} className="p-2 border" autoFocus={inputValues.end_date.length > 0}/>
+        <input name="city" value={inputValues.city} onChange={handleInputChange} placeholder="City" className="p-2 border" autoFocus={inputValues.city.length > 0}/>
+        <input name="state" value={inputValues.state} onChange={handleInputChange} placeholder="State" className="p-2 border" autoFocus={inputValues.state.length > 0}/>
+        <input name="min_price" value={inputValues.min_price} onChange={handleInputChange} placeholder="Min Price" className="p-2 border" autoFocus={inputValues.min_price.length > 0}/>
+        <input name="max_price" value={inputValues.max_price} onChange={handleInputChange} placeholder="Max Price" className="p-2 border" autoFocus={inputValues.max_price.length > 0}/>
+          {/* <button
             type="submit"
             className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
           >
             Apply Filters
-          </button>
-          <button
+          </button> */}
+      </form>
+      <button
           type="button"
-          onClick={resetFilter  }
-          className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
+          onClick={resetFilter}
+          className="text-white py-2 px-8 flex mx-auto rounded bg-[#855fa7]"
         >
           Reset Filters
         </button>
-
-
-      </form>
 
       {/* Results */}
       {isLoading ? (
