@@ -27,7 +27,7 @@ const Footer = () => {
           {/* Left Section */}
           <div className="text-[#868e96] text-[12px] flex flex-col">
             <Link href="/" className="mb-5">
-              <Image src="/virul-logo.svg" width={70} height={70} alt="virul" />
+              <Image src="/virul-logo.svg" width={70} height={70} alt="virul" className="w-[70px] h-[70px]"/>
             </Link>
             <p className="mb-2">
               Virul is a global self-service ticketing platform for live experiences that allows

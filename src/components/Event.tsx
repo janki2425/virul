@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
 import { fetchEvents, EventType } from "@/utils/fetchEvents";
 import CustomLoader from './CustomLoader';
@@ -80,6 +80,7 @@ const Event = ({ filters }: EventProps) => {
                   width={280}
                   height={180}
                   alt="event"
+                  priority
                   className="w-full h-full object-cover rounded-t-[5px]"
                 />
               </div>
