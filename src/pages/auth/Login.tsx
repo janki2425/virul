@@ -44,12 +44,6 @@ function Login() {
                 </p>
             </div>
 
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-                {error}
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-3 mt-[3px]">
               <div>
                 <label className="block text-[12px] font-[400] text-[#6F7881]">Email</label>

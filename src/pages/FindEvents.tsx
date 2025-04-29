@@ -104,13 +104,13 @@ const FindEvents = () => {
     debouncedSetFilters({...inputValues,[name]:value});
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    debouncedSetFilters.cancel();
-    setFilters(inputValues);
-    setCurrentPage(1);
-    fetchEvents();
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   debouncedSetFilters.cancel();
+  //   setFilters(inputValues);
+  //   setCurrentPage(1);
+  //   fetchEvents();
+  // };
   const resetFilter = () => {
     setInputValues({
       name: "",
@@ -154,7 +154,9 @@ const FindEvents = () => {
     <div className="px-4 mt-8 pb-5 max-w-[1280px] mx-auto">
       
       {/* Filter Form */}
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <form
+      //  onSubmit={handleSubmit} 
+       className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <input name="name" value={inputValues.name} onChange={handleInputChange} placeholder="Event Name" className="p-2 border" autoFocus={inputValues.name.length > 0}/>
         <input name="category" value={inputValues.category} onChange={handleInputChange} placeholder="Category" className="p-2 border" autoFocus={inputValues.category.length > 0}/>
         <input type="date" name="start_date" value={inputValues.start_date} onChange={handleInputChange} className="p-2 border" autoFocus={inputValues.start_date.length > 0}/>
@@ -163,22 +165,20 @@ const FindEvents = () => {
         <input name="state" value={inputValues.state} onChange={handleInputChange} placeholder="State" className="p-2 border" autoFocus={inputValues.state.length > 0}/>
         <input name="min_price" value={inputValues.min_price} onChange={handleInputChange} placeholder="Min Price" className="p-2 border" autoFocus={inputValues.min_price.length > 0}/>
         <input name="max_price" value={inputValues.max_price} onChange={handleInputChange} placeholder="Max Price" className="p-2 border" autoFocus={inputValues.max_price.length > 0}/>
-          <button
+          {/* <button
             type="submit"
             className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
           >
             Apply Filters
-          </button>
-          <button
+          </button> */}
+      </form>
+      <button
           type="button"
           onClick={resetFilter}
-          className="col-span-2 text-white p-2 rounded bg-[#855fa7]"
+          className="text-white py-2 px-8 flex mx-auto rounded bg-[#855fa7]"
         >
           Reset Filters
         </button>
-
-
-      </form>
 
       {/* Results */}
       {isLoading ? (

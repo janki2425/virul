@@ -58,7 +58,7 @@ const fetchUserData = async(): Promise<UserType>=>{
   return userData;
 }
 
-//login finction for useMutation
+//login function for useMutation
 const loginUser = async({email,password}:{email:string;password:string})=>{
   const response=await axiosInstance.post('/api/login',{email,password});
   if(!response.data.token){
