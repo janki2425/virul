@@ -86,6 +86,7 @@ const FindEvents = () => {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchEvents();
@@ -198,6 +199,7 @@ const FindEvents = () => {
                   width={280}
                   height={180}
                   alt="event"
+                  priority
                   className="w-full h-full object-cover rounded-t-[5px]"
                 />
               </div>
