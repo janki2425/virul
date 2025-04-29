@@ -1,5 +1,4 @@
 import axiosInstance from "@/pages/api/axiosInstance";
-import { BACKEND_URL } from "@/pages/api/auth/auth";
 
 export type FiltersType = {
   query:string;
