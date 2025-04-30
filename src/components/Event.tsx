@@ -3,6 +3,7 @@ import React, { useEffect, useState} from 'react';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
 import { fetchEvents, EventType } from "@/utils/fetchEvents";
 import CustomLoader from './CustomLoader';
+import { useAuth } from '@/contexts/AuthContext';
 
 
 type EventProps = {
@@ -15,6 +16,7 @@ type EventProps = {
 
 
 const Event = ({ filters }: EventProps) => {
+  const { isBookmarked, toggleBookmark, isLoggedIn, error: authError } = useAuth();
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +76,7 @@ const Event = ({ filters }: EventProps) => {
         {events.length > 0 ?  (
           events.map((event: EventType) => (
             <div key={event.id} className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg">
-              <div className="rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
+              <div className="relative rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
                 <Image
                   src={`${BACKEND_URL}/${event.image_url}`}
                   width={280}
@@ -83,6 +85,16 @@ const Event = ({ filters }: EventProps) => {
                   priority
                   className="w-full h-full object-cover rounded-t-[5px]"
                 />
+                <button 
+                onClick={() => toggleBookmark(event.id)}
+                className='absolute right-2 top-2 p-2 rounded-full bg-[#876cbc]'>
+                  <Image 
+                  src={isBookmarked(event.id) ? '/book-mark-white.svg' : '/book-mark.svg'} 
+                  width={20} 
+                  height={20} 
+                  className=""
+                  alt='bookmark'/>
+                </button>
               </div>
               <div className="flex flex-col items-start px-5 gap-1.5 py-3">
                 <h3 className="text-[14px] text-[#8C8C8C]">{event.category}</h3>
