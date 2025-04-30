@@ -42,11 +42,11 @@ const Navbar = () => {
               </div>
               <hr className="bg-black w-auto mx-2 opacity-40" />
               <nav className="flex flex-col space-y-6 mt-3 ml-3">
-                <Link href='/FindEvents' className="text-[14px] font-[600]">
+                <Link href={'/find-events'} className="text-[14px] font-[600]">
                   Find Events
                 </Link>
-                <Link href="/" className="text-[14px] font-[600]">
-                  Help
+                <Link href={'/book-mark'} className="text-[14px] font-[600]">
+                  Bookmark Events
                 </Link>
               </nav>
             </SheetContent>
@@ -82,8 +82,8 @@ const Navbar = () => {
 
         <div className="items-center gap-6 hidden lg:flex">
           <div className="flex items-center gap-6">
-            <Link href='/FindEvents' className="text-white font-[400] text-[16px]">Find Events</Link>
-            <Link href="/" className="text-white font-[400] text-[16px]">Help</Link>
+            <Link href={'/find-events'} className="text-white font-[400] text-[16px]">Find Events</Link>
+            <Link href={'/book-mark'} className="text-white font-[400] text-[16px]">Bookmark Events</Link>
           </div>
           <div className="flex items-center gap-3">
             {isPending ? (
