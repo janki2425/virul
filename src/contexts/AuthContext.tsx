@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axiosInstance from '@/pages/api/axiosInstance';
-import { useRouter } from 'next/router';
+import {useRouter, Router } from 'next/router';
 import { AxiosError } from 'axios';
 import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {jwtDecode} from 'jwt-decode'
@@ -47,6 +47,7 @@ interface AuthContextType {
   bookmarkedEvents: BookmarkType[];
   toggleBookmark: (eventId: string) => Promise<void>;
   isBookmarked: (eventId: string) => boolean;
+  suggestedEvents: BookmarkType[];
 }
 
 interface JwtPayload {
@@ -70,6 +71,7 @@ const defaultContextValue: AuthContextType = {
   bookmarkedEvents: [],
   toggleBookmark: async () => {},
   isBookmarked: () => false,
+  suggestedEvents: [],
 };
 
 
@@ -132,7 +134,6 @@ const fetchBookmarkedEvents = async (): Promise<BookmarkType[]> => {
     } else if (data.bookmarkedEvents && Array.isArray(data.bookmarkedEvents)) {
       return data.bookmarkedEvents;
     } else {
-      console.warn('Unexpected bookmark data structure:', data);
       return [];
     }
   } catch (err) {
@@ -160,6 +161,30 @@ const toggleBookmarkMutationFn = async ({ eventId, userId, isBookmarked }: { eve
   }
 };
 
+const fetchSuggestedEvents = async (): Promise<BookmarkType[]>=>{
+  const token = localStorage.getItem('token');
+  if(!token){
+    throw new Error('No token found');
+  }
+  const userId = localStorage.getItem('userId');
+  if(!userId){
+    throw new Error('No user ID found');
+  }
+  try{
+    const response = await axiosInstance.get(`/api/suggest-events?userId=${userId}`);
+    // console.log('Suggested Events API response:', response.data);
+    const data=response.data;
+    if (data.suggestedEvents && Array.isArray(data.suggestedEvents)){
+      return data.suggestedEvents;
+    }else{
+      return [];  
+    }
+  }catch(err){
+    console.log('Error fetching suggested events:', err);
+    return [];
+  }
+}
+
 // Create provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter();
@@ -182,9 +207,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     initialData:[],
   });
 
+  const {data:suggestedEventsData, isPending:isSuggestedPending,
+    error:suggestedError
+  } = useQuery<BookmarkType[]>({
+    queryKey:['suggestedEvents'],
+    queryFn:fetchSuggestedEvents,
+    enabled:hasToken && !!userData,
+    retry:false,
+    initialData:[],
+  });
+
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
   const [bookmarkedEvents, setBookmarkedEvents] = useState<BookmarkType[]>([]);
+  const [suggestedEvents, setSuggestedEvents] = useState<BookmarkType[]>([]);
   const isLoggedIn = !!user;
 
   const loginMutation = useMutation({
@@ -228,7 +264,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error('Toggle bookmark error:', errorMessage);
       setError(errorMessage || 'Failed to toggle bookmark');
     },
-    onSuccess: async(data, variables) => {
+    onSuccess: async(data) => {
       if (data.action === 'added' && data.bookmark) {
         queryClient.setQueryData(['bookmarkedEvents'], (old: BookmarkType[] | undefined) =>{
         const currentBookmarks = Array.isArray(old) ? old : [];
@@ -249,6 +285,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['bookmarkedEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['suggestedEvents'] });
     },
   });
   
@@ -265,6 +302,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setBookmarkedEvents([]);
     }
   }, [bookmarkedEventsData]);
+
+  useEffect(()=>{
+    if(suggestedEventsData && Array.isArray(suggestedEventsData)){
+      setSuggestedEvents(suggestedEventsData);
+    }else {
+      setSuggestedEvents([]);
+    }
+  }, [suggestedEventsData])
 
   useEffect(() => {
     if (isError && queryError) {
@@ -356,6 +401,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     bookmarkedEvents,
     toggleBookmark,
     isBookmarked,
+    suggestedEvents,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
