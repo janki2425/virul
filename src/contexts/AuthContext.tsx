@@ -125,7 +125,7 @@ const fetchBookmarkedEvents = async (): Promise<BookmarkType[]> => {
   }
   try {
     const response = await axiosInstance.get(`/api/getbookmarkevents?userId=${userId}`);
-    console.log('Bookmark API response:', response.data);
+    // console.log('Bookmark API response:', response.data);
     const data = response.data;
     if (Array.isArray(data)) {
       return data;
@@ -148,12 +148,10 @@ const toggleBookmarkMutationFn = async ({ eventId, userId, isBookmarked }: { eve
   } else {
     try {
       const response = await axiosInstance.post('/api/bookmark-events', { eventId, userId });
-      console.log('Bookmark added:', response.data);
       return { eventId, userId, action: 'added', bookmark: response.data };
     } catch (err) {
       const error = err as AxiosError<ApiErrorResponse>;
       if (error.response?.data?.message?.includes('already bookmarked')) {
-        console.log('Event already bookmarked, removing it');
         await axiosInstance.delete(`/api/deletebookmarkevent?userId=${userId}&eventId=${eventId}`);
         return { userId, eventId, action: 'removed' };
       }
@@ -192,17 +190,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const loginMutation = useMutation({
     mutationFn:loginUser,
     onSuccess:async({token,user})=>{
-      console.log('Login successful:', { token, user });
+      // console.log('Login successful:', { token, user });
       setError(null);
       localStorage.setItem('token', token);
       localStorage.setItem('userId', user.id);
       setUser(user); 
       queryClient.setQueryData(['user'], user);
       await router.push('/');
-      console.log('Redirected to main page');
     },
     onError:(err:AxiosError<ApiErrorResponse>)=>{
-      console.error('Login error details:', err.response?.data, err.message); 
+      // console.error('Login error details:', err.response?.data, err.message); 
       const responseData = err.response?.data;
       const errorMessage = responseData?.message || responseData?.error || err.message;
       setError(errorMessage || 'Login failed');
@@ -305,13 +302,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    queryClient.setQueryData(['user'], null); 
-    queryClient.removeQueries({ queryKey: ['user'] });
+
+    setUser(null);
     setError(null);
+
+    queryClient.setQueryData(['user'], null);
+    queryClient.removeQueries({ queryKey: ['user'] });
+    queryClient.setQueryData(['bookmarkedEvents'], []);
+    queryClient.removeQueries({ queryKey: ['bookmarkedEvents'] });
+      
     router.push('/').then(() => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      // queryClient.invalidateQueries({ queryKey: ['user'] });
       queryClient.invalidateQueries({ queryKey: ['bookmarkedEvents'] });
     });
+    
   };
 
     // Clear error
@@ -331,7 +335,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       setError(null);
       const isCurrentlyBookmarked = isBookmarked(eventId);
-      console.log(`Toggling bookmark for event ${eventId}, currently bookmarked: ${isCurrentlyBookmarked}`);
+      // console.log(`Toggling bookmark for event ${eventId}, currently bookmarked: ${isCurrentlyBookmarked}`);
       await toggleBookmarkMutation.mutateAsync({ eventId,userId:user.id, isBookmarked: isCurrentlyBookmarked });
     };
 
