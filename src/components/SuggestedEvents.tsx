@@ -9,6 +9,11 @@ import Router from 'next/router';
 const SuggestedEvents = () => {
   const { suggestedEvents,isBookmarked, toggleBookmark, isPending,} = useAuth();
 
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   if (isPending) {
     return <CustomLoader/>
   }
@@ -52,7 +57,7 @@ const SuggestedEvents = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <Image src={'/calendar.svg'} width={16} height={16} alt="event" />
-                            <p className="text-[14px] text-[#212529] line-clamp-1">{event.start_date}</p>
+                            <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_date)}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <Image src={'/location.svg'} width={16} height={16} alt="event" />

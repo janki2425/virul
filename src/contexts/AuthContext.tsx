@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axiosInstance from '@/pages/api/axiosInstance';
-import {useRouter, Router } from 'next/router';
+import {useRouter } from 'next/router';
 import { AxiosError } from 'axios';
 import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {jwtDecode} from 'jwt-decode'

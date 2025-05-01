@@ -1,7 +1,7 @@
 import axiosInstance from "@/pages/api/axiosInstance";
 
 export type FiltersType = {
-  query:string;
+  category:string;
   start_date: string;
   city: string;
 };

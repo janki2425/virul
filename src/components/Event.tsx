@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 type EventProps = {
   filters: {
-    query:string;
+    category:string;
     start_date: string;
     city: string;
   };
@@ -22,6 +22,12 @@ const Event = ({ filters }: EventProps) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+  
   
   const loadEvents = async () => {
     try {
@@ -99,7 +105,7 @@ const Event = ({ filters }: EventProps) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/calendar.svg'} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{event.start_date}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(event.start_date)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/location.svg'} width={16} height={16} alt="event" />

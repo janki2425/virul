@@ -6,14 +6,14 @@ import debounce from "lodash.debounce";
 const HeroSection = () => {
   // Local state for input fields
   const [inputValues, setInputValues] = useState({
-    query: "",
+    category: "",
     start_date: "",
     city: "",
   });
 
   // State for applied filters
   const [filters, setFilters] = useState({
-    query: "",
+    category: "",
     start_date: "",
     city: "",
   });
@@ -96,8 +96,8 @@ const HeroSection = () => {
             <div className="relative w-full col-span-2 bg-white sm:rounded lg:rounded-none lg:rounded-r border border-transparent">
               <input
                 type="text"
-                name="query"
-                value={inputValues.query}
+                name="category"
+                value={inputValues.category}
                 onChange={handleInputChange}
                 placeholder="Search by event's category"
                 className="indent-7 text-black opacity-60 text-[16px] px-3 py-2 w-full"
