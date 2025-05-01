@@ -66,7 +66,8 @@ const Navbar = () => {
               onClick={() => setShowDropdown(!showDropdown)}
               className="text-white font-[400] text-[16px] cursor-pointer"
             >
-              {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()}
+              {/* {user?.first_name?.[0].toUpperCase()}{user?.last_name?.[0].toUpperCase()} */}
+              {(user?.first_name?.[0]?.toUpperCase() ?? '') + (user?.last_name?.[0]?.toUpperCase())}
             </button>
           ) : (
             <Link href={'/auth/Login'} className="text-white font-[400] text-[16px]">
@@ -95,7 +96,8 @@ const Navbar = () => {
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="text-white font-[400] text-[16px] cursor-pointer"
                 >
-                  {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()}
+                  {/* {user?.first_name[0].toUpperCase()}{user?.last_name[0].toUpperCase()} */}
+                  {user?.first_name?.[0].toUpperCase()}{user?.last_name?.[0].toUpperCase()}
                 </button>
                 {showDropdown && (
                   <div className="absolute bg-white text-black w-[100px] p-2 rounded-md mt-2 right-0 cursor-pointer">

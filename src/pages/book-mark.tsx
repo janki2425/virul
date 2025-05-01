@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import Login from "./auth/Login";
+import SuggestedEvents from "@/components/SuggestedEvents";
 
 type EventType = {
     id: string;
@@ -22,6 +23,11 @@ type EventType = {
 const Bookmark = () => {
     const { bookmarkedEvents, isLoggedIn, isPending, error, toggleBookmark } = useAuth();
 
+    const formatDate = (dateString: string) => {
+      const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
     if (!isLoggedIn) {
         return (
           <>
@@ -35,7 +41,7 @@ const Bookmark = () => {
     <div className="w-full flex h-[64px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]">
         <Navbar />
       </div>
-      <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
+      <div className="mt-4 px-1 pb-18 grid_custom gap-4 md:gap-5 cursor-pointer">
         {isPending ? (
           <p className="text-center py-10">Loading bookmarks...</p>
         ) : error ? (
@@ -71,7 +77,7 @@ const Bookmark = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/calendar.svg'} width={16} height={16} alt="event" />
-                  <p className="text-[14px] text-[#212529] line-clamp-1">{bookmarkedEvent.start_date}</p>
+                  <p className="text-[14px] text-[#212529] line-clamp-1">{formatDate(bookmarkedEvent.start_date)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Image src={'/location.svg'} width={16} height={16} alt="event" />
@@ -89,6 +95,8 @@ const Bookmark = () => {
           <p className="text-center py-10">No events bookmarked.</p>
         )}
       </div>
+      <hr />
+      <SuggestedEvents/>
       <Footer />
     </>
   );

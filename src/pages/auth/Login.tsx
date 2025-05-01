@@ -88,7 +88,7 @@ function Login() {
               <button
                 type="submit"
                 disabled={isPending}
-                className={`w-full ${isPending ? 'bg-pink-300' : 'bg-[#EC248F]'} mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-semibold transition`}
+                className={`w-full ${isPending ? 'bg-pink-300' : 'bg-[#EC248F]'} mt-2 text-white text-[14px] cursor-pointer rounded-[4px] px-1.5 py-2 font-semibold transition`}
               >
                 {isPending ? 'Logging in...' : 'Log in'}
               </button>

@@ -96,7 +96,7 @@ const Reset = () => {
             <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#EC248F] mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-[600] transition"
+            className="w-full bg-[#EC248F] mt-2 text-white text-[14px] cursor-pointer rounded-[4px] px-1.5 py-2 font-[600] transition"
           >
             {loading ? "Sending..." : "Send OTP"}
           </button>
@@ -141,7 +141,7 @@ const Reset = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#EC248F] mt-2 text-white text-[14px] rounded-[4px] px-1.5 py-2 font-[600] transition"
+              className="w-full bg-[#EC248F] mt-2 text-white text-[14px] cursor-pointer rounded-[4px] px-1.5 py-2 font-[600] transition"
             >
               {loading ? "Resetting..." : "Reset Password"}
             </button>

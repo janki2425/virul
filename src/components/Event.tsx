@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 type EventProps = {
   filters: {
-    query:string;
+    category:string;
     start_date: string;
     city: string;
   };
@@ -23,11 +23,11 @@ const Event = ({ filters }: EventProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+  
   
   const loadEvents = async () => {
     try {
