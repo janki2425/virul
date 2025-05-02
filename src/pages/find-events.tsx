@@ -146,10 +146,6 @@ const FindEvents = () => {
   },[debouncedSetFilters])
 
 
-  if (isLoading)
-    return <CustomLoader/>;
-  
-
   return (
     <>
     <div className="w-full flex h-[64px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]">
@@ -186,7 +182,7 @@ const FindEvents = () => {
 
       {/* Results */}
       {isLoading ? (
-        <div className="text-center py-10">Loading events...</div>
+        <CustomLoader/>
       ) : error ? (
         <div className="text-center py-10 text-red-500">{error}</div>
       ) : events.length > 0 ? (
@@ -245,7 +241,7 @@ const FindEvents = () => {
       )}
     </div>
 
-    {totalPages > 1 && (
+    {events.length > 0 && totalPages > 1 && (
       <div className="flex justify-center gap-2 mt-6 mb-6">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
