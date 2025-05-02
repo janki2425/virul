@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import CustomLoader from "@/components/CustomLoader";
 import debounce from 'lodash.debounce';
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
 
 type EventType = {
   id: string;
@@ -22,6 +23,7 @@ type EventType = {
 
 
 const FindEvents = () => {
+  const router = useRouter();
   const { isBookmarked, toggleBookmark, isLoggedIn, error: authError } = useAuth();
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +51,10 @@ const FindEvents = () => {
     max_price: "",
   });
 
+  const handleEventClick = (eventId: string) => {
+    console.log("eventId:", eventId);
+    router.push(`/events/${eventId}`);
+  };
 
  
   const formatDate = (dateString: string) => {
@@ -190,6 +196,7 @@ const FindEvents = () => {
           {events.map((event: EventType) => (
             <div
               key={event.id}
+              onClick={() => handleEventClick(event.id)}
               className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg"
             >
               <div className="relative rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
