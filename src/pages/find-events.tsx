@@ -246,7 +246,7 @@ const FindEvents = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-[#727272] text-black rounded disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 bg-[#455A64] text-white rounded disabled:opacity-50 cursor-pointer"
         >
           Prev
         </button>
@@ -264,7 +264,7 @@ const FindEvents = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-[#727272] text-black cursor-pointer rounded disabled:opacity-50"
+          className="px-4 py-2 bg-[#455A64] text-white cursor-pointer rounded disabled:opacity-50"
         >
           Next
         </button>
