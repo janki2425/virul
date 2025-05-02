@@ -13,6 +13,7 @@ export type EventType = {
   short_description: string;
   image_url: string;
   start_date: string;
+  end_date: string;
   address: string;
   city:string;
   price: number;

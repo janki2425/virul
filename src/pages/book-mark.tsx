@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import Login from "./auth/Login";
 import SuggestedEvents from "@/components/SuggestedEvents";
+import { useRouter } from "next/router";
 
 type EventType = {
     id: string;
@@ -22,10 +23,15 @@ type EventType = {
 
 const Bookmark = () => {
     const { bookmarkedEvents, isLoggedIn, isPending, error, toggleBookmark } = useAuth();
-
+    const router = useRouter();
     const formatDate = (dateString: string) => {
       const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    const handleEventClick = (eventId: string) => {
+      console.log("eventId:", eventId);
+      router.push(`/events/${eventId}`);
     };
 
     if (!isLoggedIn) {
@@ -50,6 +56,7 @@ const Bookmark = () => {
           bookmarkedEvents.map((bookmarkedEvent: EventType) => (
             <div
               key={bookmarkedEvent.id}
+              onClick={() => handleEventClick(bookmarkedEvent.id)}
               className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg"
             >
               <div className="relative rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useState ,useRef } from "react";
-import Event from "./Event";
+import Events from "./events/index";
 import debounce from "lodash.debounce";
 
 const HeroSection = () => {
@@ -143,7 +143,7 @@ const HeroSection = () => {
         </div>
       </div>
       <div className="w-full z-20 mt-8">
-        <Event filters={filters} />
+        <Events filters={filters} />
       </div>
     </>
   );

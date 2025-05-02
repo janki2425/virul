@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import CustomLoader from "@/components/CustomLoader";
 import debounce from 'lodash.debounce';
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
 
 type EventType = {
   id: string;
@@ -22,6 +23,7 @@ type EventType = {
 
 
 const FindEvents = () => {
+  const router = useRouter();
   const { isBookmarked, toggleBookmark, isLoggedIn, error: authError } = useAuth();
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +51,10 @@ const FindEvents = () => {
     max_price: "",
   });
 
+  const handleEventClick = (eventId: string) => {
+    console.log("eventId:", eventId);
+    router.push(`/events/${eventId}`);
+  };
 
  
   const formatDate = (dateString: string) => {
@@ -146,10 +152,6 @@ const FindEvents = () => {
   },[debouncedSetFilters])
 
 
-  if (isLoading)
-    return <CustomLoader/>;
-  
-
   return (
     <>
     <div className="w-full flex h-[64px] bg-gradient-to-r from-[#855FA7] via-[#EC248F] to-[#FCC280]">
@@ -186,7 +188,7 @@ const FindEvents = () => {
 
       {/* Results */}
       {isLoading ? (
-        <div className="text-center py-10">Loading events...</div>
+        <CustomLoader/>
       ) : error ? (
         <div className="text-center py-10 text-red-500">{error}</div>
       ) : events.length > 0 ? (
@@ -194,6 +196,7 @@ const FindEvents = () => {
           {events.map((event: EventType) => (
             <div
               key={event.id}
+              onClick={() => handleEventClick(event.id)}
               className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg"
             >
               <div className="relative rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
@@ -245,12 +248,12 @@ const FindEvents = () => {
       )}
     </div>
 
-    {totalPages > 1 && (
+    {events.length > 0 && totalPages > 1 && (
       <div className="flex justify-center gap-2 mt-6 mb-6">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-[#727272] text-black rounded disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 bg-[#455A64] text-white rounded disabled:opacity-50 cursor-pointer"
         >
           Prev
         </button>
@@ -268,7 +271,7 @@ const FindEvents = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-[#727272] text-black cursor-pointer rounded disabled:opacity-50"
+          className="px-4 py-2 bg-[#455A64] text-white cursor-pointer rounded disabled:opacity-50"
         >
           Next
         </button>

@@ -2,8 +2,9 @@ import Image from 'next/image';
 import React, { useEffect, useState} from 'react';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
 import { fetchEvents, EventType } from "@/utils/fetchEvents";
-import CustomLoader from './CustomLoader';
+import CustomLoader from '../CustomLoader';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from "next/router";
 
 
 type EventProps = {
@@ -15,7 +16,8 @@ type EventProps = {
 };
 
 
-const Event = ({ filters }: EventProps) => {
+const Events = ({ filters }: EventProps) => {
+  const router = useRouter();
   const { isBookmarked, toggleBookmark, isLoggedIn, error: authError } = useAuth();
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +41,6 @@ const Event = ({ filters }: EventProps) => {
       const elapsed = Date.now() - start;
       const MIN_LOADING_TIME = 500;
       
-
       setTimeout(() => {
         setEvents(data);
         setTotalPages(totalPages);
@@ -56,8 +57,20 @@ const Event = ({ filters }: EventProps) => {
   };
 
   useEffect(()=>{
+    if (filters.category || filters.start_date || filters.city) {
+      setCurrentPage(1);
+    }
     loadEvents();
-  },[currentPage,filters])
+  },[filters])
+
+  useEffect(()=>{
+    loadEvents();
+  },[currentPage])
+
+  const handleEventClick = (eventId: string) => {
+    console.log("eventId:", eventId);
+    router.push(`/events/${eventId}`);
+  };
 
   if (isLoading) return <CustomLoader/>;
   if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
@@ -75,7 +88,11 @@ const Event = ({ filters }: EventProps) => {
       <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
         {events.length > 0 ?  (
           events.map((event: EventType) => (
-            <div key={event.id} className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg">
+            <div 
+              key={event.id} 
+              onClick={() => handleEventClick(event.id)}
+              className="relative border border-[#e9ecef] pb-12 rounded-[5px] transition-transform duration-300 ease-in-out transform origin-bottom hover:-translate-y-2 hover:shadow-lg"
+            >
               <div className="relative rounded-t-[5px] h-[180px] overflow-hidden border border-[#e9ecef]">
                 <Image
                   src={`${BACKEND_URL}/${event.image_url}`}
@@ -86,14 +103,19 @@ const Event = ({ filters }: EventProps) => {
                   className="w-full h-full object-cover rounded-t-[5px]"
                 />
                 <button 
-                onClick={() => toggleBookmark(event.id)}
-                className='absolute right-2 top-2 p-2 rounded-full bg-[#876cbc]'>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleBookmark(event.id);
+                  }}
+                  className='absolute right-2 top-2 p-2 rounded-full bg-[#876cbc]'
+                >
                   <Image 
-                  src={isBookmarked(event.id) ? '/book-mark-white.svg' : '/book-mark.svg'} 
-                  width={20} 
-                  height={20} 
-                  className=""
-                  alt='bookmark'/>
+                    src={isBookmarked(event.id) ? '/book-mark-white.svg' : '/book-mark.svg'} 
+                    width={20} 
+                    height={20} 
+                    className=""
+                    alt='bookmark'
+                  />
                 </button>
               </div>
               <div className="flex flex-col items-start px-5 gap-1.5 py-3">
@@ -128,7 +150,7 @@ const Event = ({ filters }: EventProps) => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-[#727272] text-black rounded disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 bg-[#455A64] text-white rounded disabled:opacity-50 cursor-pointer"
         >
           Prev
         </button>
@@ -146,7 +168,7 @@ const Event = ({ filters }: EventProps) => {
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-[#727272] text-black cursor-pointer rounded disabled:opacity-50"
+          className="px-4 py-2 bg-[#455A64] text-white cursor-pointer rounded disabled:opacity-50"
         >
           Next
         </button>
@@ -157,4 +179,4 @@ const Event = ({ filters }: EventProps) => {
   );
 };
 
-export default Event;
+export default Events;
