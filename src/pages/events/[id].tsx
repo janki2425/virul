@@ -35,7 +35,7 @@ const EventDetails = () => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [isAddingComment, setIsAddingComment] = useState<boolean>(false);
-  const [isDeletingComment, setIsDeletingComment] = useState<boolean>(false);
+  // const [isDeletingComment, setIsDeletingComment] = useState<boolean>(false);
   const [rating, setRating] = useState<string>("");
   const [showComments, setShowComments] = useState(false);
 
@@ -98,28 +98,28 @@ const EventDetails = () => {
   };  
 
 
-  const deleteComment = async (comment: CommentType) => {
-    setIsDeletingComment(true);
-    try {
-      const user_id = localStorage.getItem('userId');
-      if (!user_id) {
-        console.error("User ID not found");
-        setIsDeletingComment(false);
-        return;
-      }
-      await axiosInstance.delete(`/api/feedbacks`, {
-        params: {
-          user_id,
-          event_id: comment.event_id
-        }
-      });
-      setComments(comments.filter((c) => c.id !== comment.id));
-    } catch (error) { 
-      console.error("Error deleting comment:", error);
-    } finally {
-      setIsDeletingComment(false);
-    }
-  };  
+  // const deleteComment = async (comment: CommentType) => {
+  //   setIsDeletingComment(true);
+  //   try {
+  //     const user_id = localStorage.getItem('userId');
+  //     if (!user_id) {
+  //       console.error("User ID not found");
+  //       setIsDeletingComment(false);
+  //       return;
+  //     }
+  //     await axiosInstance.delete(`/api/feedbacks`, {
+  //       params: {
+  //         user_id,
+  //         event_id: comment.event_id
+  //       }
+  //     });
+  //     setComments(comments.filter((c) => c.id !== comment.id));
+  //   } catch (error) { 
+  //     console.error("Error deleting comment:", error);
+  //   } finally {
+  //     setIsDeletingComment(false);
+  //   }
+  // };  
 
   // get all comments and ratings
   const getCommentsAndRatings = async () => {
@@ -154,9 +154,6 @@ const EventDetails = () => {
             />
             
           </div>
-
-          
-
           {/* Event Details */}
           <div className="p-8 relative">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
@@ -192,7 +189,7 @@ const EventDetails = () => {
                   </div>
               </div>
             </div>
-           {/* contact details and organization name */}
+           
            <div className="flex flex-col gap-6 mt-8">
             <div className="flex items-center gap-3">
               <Image src="/contact.svg" width={24} height={24} alt="contact" />
@@ -213,14 +210,13 @@ const EventDetails = () => {
         </div>
       </div>
       <hr />
-      {/* feedback section (user can add comments and see other comments) */}
+      {/* feedback section*/}
       {hasEventStarted && (
         <section className="px-4 mt-8">
           <div className="max-w-[1280px] mx-auto border-[1px] border-gray-300 bg-white rounded-xl overflow-hidden">
             <div className="px-8 py-4">
               <h2 className="text-2xl font-bold text-[#EC248F]">Feedback</h2>
             </div>
-            {/* user can add comments using input field and <button></button> */}
             <div className="px-8 py-4 flex flex-col gap-3">
               <input 
                 type="text" 
