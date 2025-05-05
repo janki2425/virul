@@ -142,7 +142,7 @@ const EventDetails = () => {
         <Navbar/>
       </div>
       <div className="px-4 py-10">
-        <div className="max-w-[1280px] mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="max-w-[1280px] mx-auto bg-white rounded-xl overflow-hidden">
           {/* Event Image */}
           <div className="relative h-96 lg:h-[500px] xl:h-[700px]  w-full">
             <Image
@@ -212,15 +212,16 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
+      <hr />
       {/* feedback section (user can add comments and see other comments) */}
       {hasEventStarted && (
-        <section className="px-4">
-          <div className="max-w-[1280px] mx-auto border-[1px] border-gray-300 bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="p-8">
+        <section className="px-4 mt-8">
+          <div className="max-w-[1280px] mx-auto border-[1px] border-gray-300 bg-white rounded-xl overflow-hidden">
+            <div className="px-8 py-4">
               <h2 className="text-2xl font-bold text-[#EC248F]">Feedback</h2>
             </div>
             {/* user can add comments using input field and <button></button> */}
-            <div className="p-8 flex flex-col gap-3">
+            <div className="px-8 py-4 flex flex-col gap-3">
               <input 
                 type="text" 
                 value={newComment} 
