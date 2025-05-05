@@ -16,9 +16,15 @@ type EventType = {
   short_description: string;
   image_url: string;
   start_date: string;
+  end_date: string;
   address: string;
   city:string;
   price: number;
+  is_virtual: boolean,
+  state: string,
+  postal_code: string,
+  contact_details: string,
+  organization_name: string,
 };
 
 
@@ -80,7 +86,7 @@ const FindEvents = () => {
       queryParams.append("limit", "8"); 
 
       const res = await axiosInstance.get(
-        `api/getall-events?${queryParams.toString()}`,
+        `api/events?${queryParams.toString()}`,
       );
 
       setEvents(res.data.data || []);
