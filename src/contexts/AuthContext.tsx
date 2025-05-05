@@ -45,8 +45,8 @@ interface AuthContextType {
   logout: () => void;
   clearError: () => void;
   bookmarkedEvents: BookmarkType[];
-  toggleBookmark: (eventId: string) => Promise<void>;
-  isBookmarked: (eventId: string) => boolean;
+  toggleBookmark: (event_id: string) => Promise<void>;
+  isBookmarked: (event_id: string) => boolean;
   suggestedEvents: BookmarkType[];
 }
 
@@ -121,12 +121,12 @@ const fetchBookmarkedEvents = async (): Promise<BookmarkType[]> => {
   if (!token) {
     throw new Error('No token found');
   }
-  const userId = localStorage.getItem('userId');
-  if (!userId) {
+  const uset_id = localStorage.getItem('userId');
+  if (!uset_id) {
     throw new Error('No user ID found');
   }
   try {
-    const response = await axiosInstance.get(`/api/getbookmarkevents?userId=${userId}`);
+    const response = await axiosInstance.get(`/api/bookmarks?user_id=${uset_id}`);
     // console.log('Bookmark API response:', response.data);
     const data = response.data;
     if (Array.isArray(data)) {
@@ -142,19 +142,19 @@ const fetchBookmarkedEvents = async (): Promise<BookmarkType[]> => {
   }
 };
 
-const toggleBookmarkMutationFn = async ({ eventId, userId, isBookmarked }: { eventId: string;userId:string; isBookmarked: boolean }) => {
+const toggleBookmarkMutationFn = async ({ event_id, uset_id, isBookmarked }: { event_id: string; uset_id: string; isBookmarked: boolean }) => {
   if (isBookmarked) {
-    await axiosInstance.delete(`/api/deletebookmarkevent?userId=${userId}&eventId=${eventId}`);
-    return { userId,eventId, action: 'removed' };
+    await axiosInstance.delete(`/api/bookmarks/event?user_id=${uset_id}&event_id=${event_id}`);
+    return { uset_id, event_id, action: 'removed' };
   } else {
     try {
-      const response = await axiosInstance.post('/api/bookmark-events', { eventId, userId });
-      return { eventId, userId, action: 'added', bookmark: response.data };
+      const response = await axiosInstance.post('/api/bookmarks', { event_id, uset_id });
+      return { event_id, uset_id, action: 'added', bookmark: response.data };
     } catch (err) {
       const error = err as AxiosError<ApiErrorResponse>;
       if (error.response?.data?.message?.includes('already bookmarked')) {
-        await axiosInstance.delete(`/api/deletebookmarkevent?userId=${userId}&eventId=${eventId}`);
-        return { userId, eventId, action: 'removed' };
+        await axiosInstance.delete(`/api/bookmarks/event?user_id=${uset_id}&event_id=${event_id}`);
+        return { uset_id, event_id, action: 'removed' };
       }
       throw err;
     }
@@ -166,12 +166,12 @@ const fetchSuggestedEvents = async (): Promise<BookmarkType[]>=>{
   if(!token){
     throw new Error('No token found');
   }
-  const userId = localStorage.getItem('userId');
-  if(!userId){
+  const user_id = localStorage.getItem('userId');
+  if(!user_id){
     throw new Error('No user ID found');
   }
   try{
-    const response = await axiosInstance.get(`/api/suggest-events?userId=${userId}`);
+    const response = await axiosInstance.get(`/api/events/suggestions?user_id=${user_id}`);
     // console.log('Suggested Events API response:', response.data);
     const data=response.data;
     if (data.suggestedEvents && Array.isArray(data.suggestedEvents)){
@@ -244,15 +244,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const toggleBookmarkMutation = useMutation({
     mutationFn: toggleBookmarkMutationFn,
-    onMutate: async ({ eventId, isBookmarked }) => {
+    onMutate: async ({ event_id, isBookmarked }) => {
       await queryClient.cancelQueries({ queryKey: ['bookmarkedEvents'] });
       const previousBookmarks = queryClient.getQueryData<BookmarkType[]>(['bookmarkedEvents']);
       queryClient.setQueryData(['bookmarkedEvents'], (old: BookmarkType[] | undefined) => {
         const currentBookmarks = Array.isArray(old) ? old : [];
         if (isBookmarked) {
-          return currentBookmarks.filter((bookmark) => bookmark.id !== eventId);
+          return currentBookmarks.filter((bookmark) => bookmark.id !== event_id);
         } else {
-          return [...currentBookmarks, { id: eventId, name: 'Loading...', category: '', short_description: '', image_url: '', start_date: '', address: '', city: '', price: 0 }];
+          return [...currentBookmarks, { id: event_id, name: 'Loading...', category: '', short_description: '', image_url: '', start_date: '', address: '', city: '', price: 0 }];
         }
       });
       return { previousBookmarks };
@@ -268,10 +268,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (data.action === 'added' && data.bookmark) {
         queryClient.setQueryData(['bookmarkedEvents'], (old: BookmarkType[] | undefined) =>{
         const currentBookmarks = Array.isArray(old) ? old : [];
-        return currentBookmarks.map((b) => (b.id === data.eventId ? data.bookmark : b));
+        return currentBookmarks.map((b) => (b.id === data.event_id ? data.bookmark : b));
         });
         setBookmarkedEvents((prev) =>
-          prev.map((b) => (b.id === data.eventId ? data.bookmark : b))
+          prev.map((b) => (b.id === data.event_id ? data.bookmark : b))
         );
       }
       else if (data.action === 'removed') {
@@ -368,7 +368,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setError(null);
     };
 
-    const toggleBookmark = async (eventId: string) => {
+    const toggleBookmark = async (event_id: string) => {
       if (!isLoggedIn) {
         setError('Please log in to bookmark events');
         router.push('/auth/Login');
@@ -379,14 +379,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return;
       }
       setError(null);
-      const isCurrentlyBookmarked = isBookmarked(eventId);
-      // console.log(`Toggling bookmark for event ${eventId}, currently bookmarked: ${isCurrentlyBookmarked}`);
-      await toggleBookmarkMutation.mutateAsync({ eventId,userId:user.id, isBookmarked: isCurrentlyBookmarked });
+      const isCurrentlyBookmarked = isBookmarked(event_id);
+      // console.log(`Toggling bookmark for event ${event_id}, currently bookmarked: ${isCurrentlyBookmarked}`);
+      await toggleBookmarkMutation.mutateAsync({ event_id, uset_id: user.id, isBookmarked: isCurrentlyBookmarked });
     };
 
     // Check if event is bookmarked
-    const isBookmarked = (eventId: string) => {
-      const result = Array.isArray(bookmarkedEvents) ? bookmarkedEvents.some((bookmark) => bookmark.id === eventId) : false;
+    const isBookmarked = (event_id: string) => {
+      const result = Array.isArray(bookmarkedEvents) ? bookmarkedEvents.some((bookmark) => bookmark.id === event_id) : false;
       return result;
     };
 

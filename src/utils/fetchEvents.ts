@@ -17,6 +17,11 @@ export type EventType = {
   address: string;
   city:string;
   price: number;
+  is_virtual: boolean,
+  state: string,
+  postal_code: string,
+  contact_details: string,
+  organization_name: string,
 };
 
 export const fetchEvents = async (filters: FiltersType,page: number): Promise<{ data: EventType[]; totalPages: number }> => {
@@ -33,7 +38,7 @@ export const fetchEvents = async (filters: FiltersType,page: number): Promise<{ 
   
   try{
     const res = await axiosInstance.get(
-      `api/getall-events?${queryParams.toString()}`
+      `api/events?${queryParams.toString()}`
       ); 
     return {
       data: res.data.data || [],
