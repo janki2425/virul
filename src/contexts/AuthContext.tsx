@@ -151,7 +151,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     retry: false,
   });
 
-  const { data: bookmarkedEventsData, isPending: isBookmarksPending, error: bookmarkError } = useQuery<BookmarkType[]>({
+  const { data: bookmarkedEventsData, isPending: isBookmarksPending} = useQuery<BookmarkType[]>({
     queryKey: ['bookmarkedEvents'],
     queryFn: fetchBookmarkedEvents,
     enabled: hasToken && !!userData,
@@ -159,8 +159,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     initialData:[],
   });
 
-  const {data:suggestedEventsData, isPending:isSuggestedPending,
-    error:suggestedError
+  const {data:suggestedEventsData
   } = useQuery<BookmarkType[]>({
     queryKey:['suggestedEvents'],
     queryFn:fetchSuggestedEvents,

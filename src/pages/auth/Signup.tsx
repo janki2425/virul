@@ -21,7 +21,6 @@ async function registerUser(formData: {
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({first_name: '',last_name: '',email: '',password: ''});
-  const [error, setError] = useState('');
   const router = useRouter();
 
   const mutation = useMutation({
@@ -37,7 +36,6 @@ function Signup() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     mutation.mutate(form);
   };
 
@@ -127,7 +125,7 @@ function Signup() {
 
           <div className='text-[14px] font-[400] flex flex-col md:flex-row items-center justify-center mt-[6px]'>
             <p className='text-[#6F7881]'>By continuing you agree to</p>
-            <p className='hover:underline text-[#EC248F]'>Virul's Terms of Service</p>
+            <p className='hover:underline text-[#EC248F]'>Virul&apos;s Terms of Service</p>
           </div>
         </form>
 

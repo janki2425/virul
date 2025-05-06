@@ -1,4 +1,4 @@
-import React ,{useState,useEffect} from "react";
+import React from "react";
 import Image from "next/image";
 import { BACKEND_URL } from "./api/auth/auth";
 import Navbar from "@/components/Navbar";
