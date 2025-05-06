@@ -12,7 +12,7 @@ import { EventType } from "@/utils/types";
 
 const FindEvents = () => {
   const router = useRouter();
-  const { isBookmarked, toggleBookmark, isLoggedIn, error: authError } = useAuth();
+  const { isBookmarked, toggleBookmark } = useAuth();
   const [events, setEvents] = useState<EventType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

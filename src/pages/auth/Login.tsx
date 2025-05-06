@@ -11,7 +11,7 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({ email: '', password: '' });
     const router = useRouter();
-    const { login, error, clearError, isPending } = useAuth();
+    const { login, clearError, isPending } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -37,7 +37,7 @@ function Login() {
             <div className='leading-6'>
                 <h2 className="text-[24px] font-[700] text-[#0f0f0f] text-center mt-6 tracking-tight">Log in</h2>
                 <p className="text-center text-[14px] text-[#6F7881] mb-2">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href={"/auth/Signup"} className="text-pink-500 font-medium hover:underline">
                     Sign up
                 </Link>
