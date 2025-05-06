@@ -9,16 +9,16 @@ import SuggestedEvents from "@/components/SuggestedEvents";
 import { useRouter } from "next/router";
 
 type EventType = {
-    id: string;
-    name: string;
-    category: string;
-    short_description: string;
-    image_url: string;
-    start_date: string;
-    address: string;
-    city:string;
-    price: number;
-    isBookmarked?: boolean;
+  id: string;
+  name: string;
+  category: string;
+  short_description: string;
+  image_url: string;
+  start_date: string;
+  address: string;
+  city:string;
+  price: number;
+  isBookmarked?: boolean;
 };
 
 const Bookmark = () => {
@@ -69,7 +69,10 @@ const Bookmark = () => {
                   className="w-full h-full object-cover rounded-t-[5px]"
                 />
                 <button
-                  onClick={() => toggleBookmark(bookmarkedEvent.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleBookmark(bookmarkedEvent.id);
+                  }}
                   className="absolute right-2 top-2 p-2 rounded-full bg-[#876cbc]"
                 >
                   <Image src={'/book-mark-white.svg'} width={20} height={20} className="" alt="bookmark" />
