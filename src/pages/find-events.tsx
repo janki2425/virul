@@ -8,25 +8,7 @@ import CustomLoader from "@/components/CustomLoader";
 import debounce from 'lodash.debounce';
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
-
-type EventType = {
-  id: string;
-  name: string;
-  category: string;
-  short_description: string;
-  image_url: string;
-  start_date: string;
-  end_date: string;
-  address: string;
-  city:string;
-  price: number;
-  is_virtual: boolean,
-  state: string,
-  postal_code: string,
-  contact_details: string,
-  organization_name: string,
-};
-
+import { EventType } from "@/utils/types";
 
 const FindEvents = () => {
   const router = useRouter();

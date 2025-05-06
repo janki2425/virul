@@ -5,15 +5,7 @@ import { fetchEvents, EventType } from "@/utils/fetchEvents";
 import CustomLoader from '../CustomLoader';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from "next/router";
-
-
-type EventProps = {
-  filters: {
-    category:string;
-    start_date: string;
-    city: string;
-  };
-};
+import { EventProps } from '@/utils/types';
 
 
 const Events = ({ filters }: EventProps) => {

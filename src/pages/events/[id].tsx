@@ -9,21 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import axiosInstance from "../api/axiosInstance";
 import { toast } from "react-toastify";
-
-
-interface CommentType {
-  id: string;
-  event_id: string;
-  user_id: string;
-  rating: string;
-  comment: string;
-  created_at: string;
-  user?: {
-    first_name: string;
-    last_name: string;
-  };
-}
-
+import { CommentType } from "@/utils/types";
 
 const EventDetails = () => {
   const router = useRouter();

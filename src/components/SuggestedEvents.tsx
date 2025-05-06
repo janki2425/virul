@@ -1,6 +1,5 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import Link from 'next/link';
 import CustomLoader from './CustomLoader';
 import Image from 'next/image';
 import { BACKEND_URL } from '@/pages/api/auth/auth';
@@ -31,7 +30,7 @@ const SuggestedEvents = () => {
     <div className="p-4 mt-18">
       <h2 className="text-2xl font-bold mb-4">Suggested Events</h2>
       <div className="mt-4 px-1 grid_custom gap-4 md:gap-5 cursor-pointer">
-        {suggestedEvents.map((event) => (
+        {suggestedEvents.slice(0, 4).map((event) => (
           <div 
           key={event.id} 
           onClick={() => handleEventClick(event.id)}
@@ -46,7 +45,10 @@ const SuggestedEvents = () => {
                             className="w-full h-full object-cover rounded-t-[5px]"
                           />
                           <button 
-                          onClick={() => toggleBookmark(event.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleBookmark(event.id);
+                          }}
                           className='absolute right-2 top-2 p-2 rounded-full bg-[#876cbc]'>
                             <Image 
                             src={isBookmarked(event.id) ? '/book-mark-white.svg' : '/book-mark.svg'} 

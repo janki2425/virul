@@ -66,7 +66,6 @@ const Navbar = () => {
               onClick={() => setShowDropdown(!showDropdown)}
               className="text-white font-[400] text-[16px] cursor-pointer"
             >
-              {/* {user?.first_name?.[0].toUpperCase()}{user?.last_name?.[0].toUpperCase()} */}
               {(user?.first_name?.[0]?.toUpperCase() ?? '') + (user?.last_name?.[0]?.toUpperCase())}
             </button>
           ) : (

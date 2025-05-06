@@ -4,59 +4,11 @@ import {useRouter } from 'next/router';
 import { AxiosError } from 'axios';
 import { useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {jwtDecode} from 'jwt-decode'
-
-// Define types
-interface UserType {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email?: string;
-}
-
-interface ApiErrorResponse {
-  error?: string;
-  message?: string;
-}
-
-interface BookmarkType {
-  id: string;
-  name: string;
-  category: string;
-  short_description: string;
-  image_url: string;
-  start_date: string;
-  address: string;
-  city: string;
-  state?: string;
-  postal_code?: string;
-  contact_details?: string;
-  organization_name?: string;
-  price: number;
-  created_at?: string;
-  updated_at?: string | null;
-}
-
-interface AuthContextType {
-  user: UserType | null;
-  isLoggedIn: boolean;
-  isPending: boolean;
-  error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  clearError: () => void;
-  bookmarkedEvents: BookmarkType[];
-  toggleBookmark: (event_id: string) => Promise<void>;
-  isBookmarked: (event_id: string) => boolean;
-  suggestedEvents: BookmarkType[];
-}
-
-interface JwtPayload {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email?: string;
-  exp?: number; 
-}
+import { UserType } from '@/utils/types';
+import { ApiErrorResponse } from '@/utils/types';
+import { BookmarkType } from '@/utils/types';
+import { AuthContextType } from '@/utils/types';
+import { JwtPayload } from '@/utils/types';
 
 
 // Create default context state
